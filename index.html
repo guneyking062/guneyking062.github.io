@@ -66,8 +66,8 @@
             margin: 60px auto;
             padding: 0 20px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
         }
 
         .card {
@@ -97,7 +97,7 @@
             overflow: hidden;
         }
 
-        /* Gotik Stilize Neon 62 Logosu */
+        /* Eşit Boyutlu Gotik Stilize Neon 62 Logosu */
         .neon-62 {
             font-size: 80px;
             font-weight: 900;
@@ -110,39 +110,43 @@
                 0 0 40px #002aff;
             letter-spacing: -2px;
             user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+        .neon-62 span {
+            font-size: 80px; /* Her iki rakamın da boyutu tamamen eşitlendi */
+            display: inline-block;
         }
 
-        /* Fütüristik Dijital Kum Saati Efekti */
+        /* Fütüristik OVAL Kum Saati Efekti */
         .cyber-hourglass {
             position: relative;
-            width: 50px;
-            height: 80px;
+            width: 55px;
+            height: 85px;
             border: 4px solid #00f0ff;
-            border-radius: 8px;
+            border-radius: 25px; /* Dış çerçeve daha ovalleştirildi */
             box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
             animation: flip 6s ease-in-out infinite;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 4px;
         }
-        .cyber-hourglass::before, .cyber-hourglass::after {
-            content: '';
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 18px solid transparent;
-            border-right: 18px solid transparent;
-        }
-        /* Üst Hazne */
-        .cyber-hourglass::before {
-            top: 4px;
-            border-top: 32px solid #00f0ff;
+        /* Oval İç Hazneler */
+        .hourglass-top, .hourglass-bottom {
+            width: 100%;
+            height: 34px;
+            background: #00f0ff;
             filter: drop-shadow(0 0 5px #00f0ff);
+            transition: 0.5s;
         }
-        /* Alt Hazne */
-        .cyber-hourglass::after {
-            bottom: 4px;
-            border-bottom: 32px solid #00f0ff;
-            filter: drop-shadow(0 0 5px #00f0ff);
+        .hourglass-top {
+            border-radius: 15px 15px 5px 5px; /* Üst hazne oval yapıldı */
+        }
+        .hourglass-bottom {
+            border-radius: 5px 5px 15px 15px; /* Alt hazne oval yapıldı */
         }
         @keyframes flip {
             0%, 90% { transform: rotate(0deg); }
@@ -160,9 +164,16 @@
             50% { transform: scale(1.1); }
         }
 
-        .card-content { padding: 30px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
-        .card-title { font-size: 22px; font-weight: 700; margin-bottom: 15px; color: #f5f5f5; }
-        .card-desc { font-size: 15px; color: #8b949e; line-height: 1.6; margin-bottom: 25px; }
+        /* Sudoku Emojisi Özel Efekti */
+        .glowing-sudoku {
+            font-size: 65px;
+            filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.6));
+            animation: pulse 2.5s infinite ease-in-out;
+        }
+
+        .card-content { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .card-title { font-size: 21px; font-weight: 700; margin-bottom: 12px; color: #f5f5f5; }
+        .card-desc { font-size: 14px; color: #8b949e; line-height: 1.6; margin-bottom: 20px; }
         
         .card-btn {
             width: 100%;
@@ -192,11 +203,11 @@
             border: 1px solid #3b82f6;
             border-radius: 24px;
             width: 95%; max-width: 550px;
-            padding: 40px;
+            padding: 30px;
             position: relative;
             text-align: center;
             box-shadow: 0 0 50px rgba(59, 130, 246, 0.2);
-            max-height: 90vh;
+            max-height: 95vh;
             overflow-y: auto;
         }
         .close-btn {
@@ -307,6 +318,80 @@
             border-color: #10b981;
             cursor: default;
         }
+
+        /* SUDOKU GRID TASARIMI */
+        .sudoku-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 15px;
+        }
+        .sudoku-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            border: 3px solid #3b82f6;
+            background-color: #30363d;
+            max-width: 380px;
+            width: 100%;
+            aspect-ratio: 1;
+            margin-bottom: 15px;
+        }
+        .sudoku-cell {
+            background: #161b22;
+            border: 1px solid #21262d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #3b82f6;
+            cursor: pointer;
+            user-select: none;
+        }
+        .sudoku-cell:focus {
+            outline: none;
+            background: #1f2937;
+        }
+        /* Kalın Sudoku Bölme Çizgileri */
+        .sudoku-cell:nth-child(3n) { border-right: 2px solid #3b82f6; }
+        .sudoku-cell:nth-child(9n) { border-right: none; }
+        .sudoku-grid > div:nth-child(n+19):nth-child(-n+27),
+        .sudoku-grid > div:nth-child(n+46):nth-child(-n+54) {
+            border-bottom: 2px solid #3b82f6;
+        }
+        /* Kullanıcının girdiği sayılar */
+        .sudoku-cell.user-filled {
+            color: #00f0ff;
+        }
+        /* Seçili Hücre */
+        .sudoku-cell.selected {
+            background: rgba(59, 130, 246, 0.3) !important;
+        }
+        /* Sayı Giriş Paneli */
+        .sudoku-numbers {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            width: 100%;
+            max-width: 380px;
+            margin-bottom: 15px;
+        }
+        .sudoku-num-btn {
+            flex: 1;
+            aspect-ratio: 1;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .sudoku-num-btn:hover {
+            background: #3b82f6;
+            border-color: #3b82f6;
+        }
     </style>
 </head>
 <body>
@@ -324,7 +409,7 @@
     <div class="container">
         <div class="card">
             <div class="card-img">
-                <div class="neon-62">62</div>
+                <div class="neon-62"><span>6</span><span>2</span></div>
             </div>
             <div class="card-content">
                 <div>
@@ -337,7 +422,10 @@
 
         <div class="card">
             <div class="card-img">
-                <div class="cyber-hourglass"></div>
+                <div class="cyber-hourglass">
+                    <div class="hourglass-top"></div>
+                    <div class="hourglass-bottom"></div>
+                </div>
             </div>
             <div class="card-content">
                 <div>
@@ -358,6 +446,19 @@
                     <div class="card-desc">Kartların arkasına gizlenmiş uzay emojilerini en az hamlede eşleştir, hafızanı kanıtla!</div>
                 </div>
                 <button class="card-btn" onclick="openModal('memoryModal')">OYUNU BAŞLAT</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-img">
+                <div class="glowing-sudoku">🧩</div>
+            </div>
+            <div class="card-content">
+                <div>
+                    <div class="card-title">Kozmik Sudoku</div>
+                    <div class="card-desc">Evrenin sayısal düzenini çöz! Zihnini dinlendirecek harika bir uzay Sudoku deneyimi.</div>
+                </div>
+                <button class="card-btn" onclick="openModal('sudokuModal')">OYUNU BAŞLAT</button>
             </div>
         </div>
     </div>
@@ -450,11 +551,41 @@
                 <span>Bulunan Çift: <span id="memoryMatches" style="color: #10b981; font-weight: bold;">0/8</span></span>
             </div>
 
-            <div class="memory-grid" id="memoryGrid">
-                </div>
+            <div class="memory-grid" id="memoryGrid"></div>
 
             <button class="action-btn" style="margin-top: 15px;" onclick="initMemoryGame()">YENİDEN BAŞLA</button>
             <p id="memoryResult" style="margin-top: 15px; font-weight: bold; color: #10b981; min-height: 20px;"></p>
+        </div>
+    </div>
+
+    <div id="sudokuModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('sudokuModal')">&times;</span>
+            <h2 style="color: #10b981; margin-bottom: 5px;">🧩 Kozmik Sudoku</h2>
+            <p style="font-size: 13px; color: #8b949e; margin-bottom: 15px;">Boş hücreleri seç ve aşağıdaki sayılarla doldur!</p>
+
+            <div class="sudoku-container">
+                <div class="sudoku-grid" id="sudokuGrid"></div>
+                
+                <div class="sudoku-numbers">
+                    <button class="sudoku-num-btn" onclick="fillSelectedCell(1)">1</button>
+                    <button class="sudoku-num-btn" onclick="fillSelectedCell(2)">2</button>
+                    <button class="sudoku-num-btn" onclick="fillSelectedCell(3)">3</button>
+                    <button class="sudoku-num-btn" onclick="fillSelectedCell(4)">4</button>
+                    <button class="sudoku-num-btn" onclick="fillSelectedCell(5)">5</button>
+                    <button class="sudoku-num-btn" onclick="fillSelectedCell(6)">6</button>
+                    <button class="sudoku-num-btn" onclick="fillSelectedCell(7)">7</button>
+                    <button class="sudoku-num-btn" onclick="fillSelectedCell(8)">8</button>
+                    <button class="sudoku-num-btn" onclick="fillSelectedCell(9)">9</button>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <button class="action-btn" style="background: #ef4444;" onclick="clearSelectedCell()">SİL</button>
+                <button class="action-btn" style="background: #10b981;" onclick="checkSudokuSolution()">KONTROL ET</button>
+            </div>
+            <button class="action-btn" style="margin-top: 10px; background: #3b82f6;" onclick="initSudokuGame()">YENİ BULMACA</button>
+            <p id="sudokuResult" style="margin-top: 15px; font-weight: bold; min-height: 20px;"></p>
         </div>
     </div>
 
@@ -466,6 +597,8 @@
                 resetGuessGame();
             } else if (id === 'memoryModal') {
                 initMemoryGame();
+            } else if (id === 'sudokuModal') {
+                initSudokuGame();
             }
         }
         function closeModal(id) {
@@ -582,7 +715,7 @@
             return Math.ceil((nextBirthday - today) / oneDayMs);
         }
 
-        // DASHBOARD MOTORU (GELİŞMİŞ)
+        // DASHBOARD MOTORU
         let dashboardTimer;
         function startDashboard() {
             const dateVal = document.getElementById('birthDateInput').value;
@@ -596,7 +729,6 @@
             document.getElementById('ageInputArea').style.display = 'none';
             document.getElementById('dashboardDisplay').style.display = 'block';
 
-            // Tek seferlik sabit hesaplamalar
             document.getElementById('valZodiac').innerText = getZodiacSign(birthDay, birthMonth);
             document.getElementById('valChinese').innerText = getChineseZodiac(birthYear);
             document.getElementById('valGeneration').innerText = getGeneration(birthYear);
@@ -606,7 +738,6 @@
                 const diffMs = now - birthDate;
                 const totalSec = Math.floor(diffMs / 1000);
                 
-                // Canlı sayaçlar
                 document.getElementById('liveSec').innerText = totalSec.toLocaleString('tr-TR');
                 document.getElementById('valHeart').innerText = (totalSec * 1.3).toLocaleString('tr-TR', {maximumFractionDigits: 0});
                 document.getElementById('valBreath').innerText = (totalSec * 0.26).toLocaleString('tr-TR', {maximumFractionDigits: 0});
@@ -616,7 +747,7 @@
             }, 1000);
         }
 
-        // HAFIZA OYUNU LOGIC (EŞLEŞTİRME OYUNU)
+        // HAFIZA OYUNU
         const spaceEmojis = ['🚀', '🚀', '🛸', '🛸', '👾', '👾', '⏳', '⏳', '🪐', '🪐', '🛰️', '🛰️', '🌀', '🌀', '🔋', '🔋'];
         let selectedCards = [];
         let matchedPairs = 0;
@@ -636,7 +767,6 @@
             document.getElementById('memoryMoves').innerText = totalMoves;
             document.getElementById('memoryMatches').innerText = '0/8';
 
-            // Kart dizilimini karıştır
             const shuffled = [...spaceEmojis].sort(() => Math.random() - 0.5);
 
             shuffled.forEach((emoji, index) => {
@@ -644,7 +774,7 @@
                 card.classList.add('memory-card');
                 card.dataset.emoji = emoji;
                 card.dataset.index = index;
-                card.innerText = '❓'; // Gizli yüz
+                card.innerText = '❓';
                 card.addEventListener('click', () => handleCardClick(card));
                 grid.appendChild(card);
             });
@@ -655,7 +785,6 @@
                 return;
             }
 
-            // Kartı çevir
             card.innerText = card.dataset.emoji;
             card.classList.add('flipped');
             selectedCards.push(card);
@@ -668,7 +797,6 @@
                 const [card1, card2] = selectedCards;
 
                 if (card1.dataset.emoji === card2.dataset.emoji) {
-                    // Eşleşme başarılı
                     card1.classList.add('matched');
                     card2.classList.add('matched');
                     matchedPairs++;
@@ -680,7 +808,6 @@
                         document.getElementById('memoryResult').innerText = `🎉 Tebrikler Güney! Oyunu ${totalMoves} hamlede bitirdin!`;
                     }
                 } else {
-                    // Eşleşme başarısız, 1 saniye sonra geri kapat
                     setTimeout(() => {
                         card1.innerText = '❓';
                         card2.innerText = '❓';
@@ -690,6 +817,120 @@
                         isWaiting = false;
                     }, 1000);
                 }
+            }
+        }
+
+        // 7. KOZMİK SUDOKU SİSTEMİ
+        let selectedCell = null;
+        let sudokuSolution = [];
+        let sudokuPuzzle = [];
+
+        // Örnek bir geçerli hazır Sudoku tahtası ve maskesi
+        const baseSolution = [
+            [5,3,4,6,7,8,9,1,2],
+            [6,7,2,1,9,5,3,4,8],
+            [1,9,8,3,4,2,5,6,7],
+            [8,5,9,7,6,1,4,2,3],
+            [4,2,6,8,5,3,7,9,1],
+            [7,1,3,9,2,4,8,5,6],
+            [9,6,1,5,3,7,2,8,4],
+            [2,8,7,4,1,9,6,3,5],
+            [3,4,5,2,8,6,1,7,9]
+        ];
+
+        function initSudokuGame() {
+            const grid = document.getElementById('sudokuGrid');
+            const resultMsg = document.getElementById('sudokuResult');
+            grid.innerHTML = '';
+            resultMsg.innerText = '';
+            selectedCell = null;
+
+            // Çözümü derin kopyalayalım
+            sudokuSolution = JSON.parse(JSON.stringify(baseSolution));
+            sudokuPuzzle = JSON.parse(JSON.stringify(baseSolution));
+
+            // Hücrelerin yaklaşık yarısını boşaltalım (Oynanabilir hale getirmek için)
+            for (let r = 0; r < 9; r++) {
+                for (let c = 0; c < 9; c++) {
+                    if (Math.random() > 0.45) {
+                        sudokuPuzzle[r][c] = 0;
+                    }
+                }
+            }
+
+            // Arayüzü oluştur
+            for (let r = 0; r < 9; r++) {
+                for (let c = 0; c < 9; c++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('sudoku-cell');
+                    cell.dataset.row = r;
+                    cell.dataset.col = c;
+
+                    const val = sudokuPuzzle[r][c];
+                    if (val !== 0) {
+                        cell.innerText = val;
+                        cell.style.color = '#8b949e'; // Hazır sayılar gri dursun
+                    } else {
+                        cell.innerText = '';
+                        cell.classList.add('user-filled');
+                        cell.addEventListener('click', () => selectSudokuCell(cell));
+                    }
+                    grid.appendChild(cell);
+                }
+            }
+        }
+
+        function selectSudokuCell(cell) {
+            if (selectedCell) {
+                selectedCell.classList.remove('selected');
+            }
+            selectedCell = cell;
+            cell.classList.add('selected');
+        }
+
+        function fillSelectedCell(num) {
+            if (!selectedCell) {
+                document.getElementById('sudokuResult').innerText = '⚠️ Lütfen önce boş bir hücreye tıkla!';
+                document.getElementById('sudokuResult').style.color = '#f59e0b';
+                return;
+            }
+            document.getElementById('sudokuResult').innerText = '';
+            selectedCell.innerText = num;
+            
+            const r = parseInt(selectedCell.dataset.row);
+            const c = parseInt(selectedCell.dataset.col);
+            sudokuPuzzle[r][c] = num;
+        }
+
+        function clearSelectedCell() {
+            if (selectedCell) {
+                selectedCell.innerText = '';
+                const r = parseInt(selectedCell.dataset.row);
+                const c = parseInt(selectedCell.dataset.col);
+                sudokuPuzzle[r][c] = 0;
+            }
+        }
+
+        function checkSudokuSolution() {
+            let win = true;
+            const cells = document.querySelectorAll('.sudoku-cell');
+            
+            for (let r = 0; r < 9; r++) {
+                for (let c = 0; c < 9; c++) {
+                    if (sudokuPuzzle[r][c] !== sudokuSolution[r][c]) {
+                        win = false;
+                        break;
+                    }
+                }
+            }
+
+            const res = document.getElementById('sudokuResult');
+            if (win) {
+                res.innerText = '🎉 TEBRİKLER! Sudoku bulmacasını hatasız tamamladın!';
+                res.style.color = '#10b981';
+            } else {
+                res.innerText = '❌ Maalesef bazı sayılar yanlış yerde ya da eksikler var, tekrar dene!';
+                res.style.color = '#ef4444';
             }
         }
     </script>
