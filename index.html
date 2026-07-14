@@ -120,13 +120,13 @@
             display: inline-block;
         }
 
-        /* Eskisi Gibi Klasik Keskin Kum Saati Efekti */
+        /* Fütüristik OVAL Kum Saati Efekti */
         .cyber-hourglass {
             position: relative;
-            width: 50px;
-            height: 80px;
+            width: 55px;
+            height: 85px;
             border: 4px solid #00f0ff;
-            border-radius: 8px; /* Klasik köşeli dış kutu */
+            border-radius: 25px; /* Dış çerçeve daha ovalleştirildi */
             box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
             animation: flip 6s ease-in-out infinite;
             display: flex;
@@ -134,19 +134,19 @@
             justify-content: space-between;
             padding: 4px;
         }
-        /* Keskin Üçgen İç Hazneler (Eski Hali) */
+        /* Oval İç Hazneler */
         .hourglass-top, .hourglass-bottom {
             width: 100%;
-            height: 32px;
+            height: 34px;
             background: #00f0ff;
             filter: drop-shadow(0 0 5px #00f0ff);
             transition: 0.5s;
         }
         .hourglass-top {
-            clip-path: polygon(0 0, 100% 0, 50% 100%); /* Aşağı bakan üçgen */
+            border-radius: 15px 15px 5px 5px; /* Üst hazne oval yapıldı */
         }
         .hourglass-bottom {
-            clip-path: polygon(50% 0, 0 100%, 100% 100%); /* Yukarı bakan üçgen */
+            border-radius: 5px 5px 15px 15px; /* Alt hazne oval yapıldı */
         }
         @keyframes flip {
             0%, 90% { transform: rotate(0deg); }
@@ -437,3 +437,502 @@
         </div>
 
         <div class="card">
+            <div class="card-img">
+                <div class="glowing-brain">🧠</div>
+            </div>
+            <div class="card-content">
+                <div>
+                    <div class="card-title">Kozmik Eşleştirme</div>
+                    <div class="card-desc">Kartların arkasına gizlenmiş uzay emojilerini en az hamlede eşleştir, hafızanı kanıtla!</div>
+                </div>
+                <button class="card-btn" onclick="openModal('memoryModal')">OYUNU BAŞLAT</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-img">
+                <div class="glowing-sudoku">🧩</div>
+            </div>
+            <div class="card-content">
+                <div>
+                    <div class="card-title">Kozmik Sudoku</div>
+                    <div class="card-desc">Evrenin sayısal düzenini çöz! Zihnini dinlendirecek harika bir uzay Sudoku deneyimi.</div>
+                </div>
+                <button class="card-btn" onclick="openModal('sudokuModal')">OYUNU BAŞLAT</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="guessModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('guessModal')">&times;</span>
+            <h2 style="color: #3b82f6; margin-bottom: 10px;">🔢 Sayı Tahmin</h2>
+            
+            <div class="game-status-bar">
+                <span>Kalan Hak: <span id="remainingAttempts" style="color: #ef4444; font-weight: bold;">6</span></span>
+                <span>Yapılan Tahmin: <span id="madeAttempts" style="color: #3b82f6; font-weight: bold;">0</span></span>
+            </div>
+
+            <div id="guessInputArea">
+                <div class="input-group">
+                    <input type="number" id="guessInput" placeholder="1-100 arasında bir sayı gir...">
+                </div>
+                <button class="action-btn" onclick="playGuessGame()">TAHMİN ET</button>
+            </div>
+            
+            <button id="restartGameBtn" class="action-btn" style="display: none; margin-top: 15px;" onclick="resetGuessGame()">YENİDEN BAŞLA</button>
+            <p id="guessResult" style="margin-top: 20px; font-weight: 500; font-size: 18px;"></p>
+        </div>
+    </div>
+
+    <div id="ageModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('ageModal')">&times;</span>
+            <h2 style="color: #3b82f6; margin-bottom: 10px;">⏳ Yaşam Dashboard</h2>
+            
+            <div id="ageInputArea">
+                <p style="font-size: 14px; color: #8b949e; margin-bottom: 15px;">Doğum tarihini girerek kozmik ve biyometrik verilerini keşfet:</p>
+                <div class="input-group">
+                    <input type="date" id="birthDateInput" max="2026-07-14">
+                </div>
+                <button class="action-btn" onclick="startDashboard()">DASHBOARD'U AKTİF ET</button>
+            </div>
+            
+            <div id="dashboardDisplay" style="display: none;">
+                <div class="live-seconds" id="liveSec">000000000</div>
+                <p style="font-size: 11px; color: #8b949e; text-transform: uppercase; margin-bottom: 20px;">DÜNYADA GEÇEN TOPLAM SANİYE</p>
+                
+                <div class="dashboard-grid">
+                    <div class="metric-box">
+                        <div class="metric-val" id="valHeart">0</div>
+                        <div class="metric-lbl">Kalp Atışı</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-val" id="valBreath">0</div>
+                        <div class="metric-lbl">Nefes Sayısı</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-val" id="valEarth">0</div>
+                        <div class="metric-lbl">Kozmik Yol (km)</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-val" id="valAge">0</div>
+                        <div class="metric-lbl">Mevcut Yaşın</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-val" id="valZodiac">-</div>
+                        <div class="metric-lbl">Zodyak Burcu</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-val" id="valChinese">-</div>
+                        <div class="metric-lbl">Çin Burcu</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-val" id="valNextBirthday">-</div>
+                        <div class="metric-lbl">Doğum Gününe Kalan Gün</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-val" id="valGeneration">-</div>
+                        <div class="metric-lbl">Kuşak / Nesil</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="memoryModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('memoryModal')">&times;</span>
+            <h2 style="color: #3b82f6; margin-bottom: 5px;">🧠 Kozmik Eşleştirme</h2>
+            <p style="font-size: 13px; color: #8b949e; margin-bottom: 10px;">Tüm çiftleri en az hamlede bulmaya çalış!</p>
+            
+            <div class="game-status-bar">
+                <span>Hamle Sayısı: <span id="memoryMoves" style="color: #3b82f6; font-weight: bold;">0</span></span>
+                <span>Bulunan Çift: <span id="memoryMatches" style="color: #10b981; font-weight: bold;">0/8</span></span>
+            </div>
+
+            <div class="memory-grid" id="memoryGrid"></div>
+
+            <button class="action-btn" style="margin-top: 15px;" onclick="initMemoryGame()">YENİDEN BAŞLA</button>
+            <p id="memoryResult" style="margin-top: 15px; font-weight: bold; color: #10b981; min-height: 20px;"></p>
+        </div>
+    </div>
+
+    <div id="sudokuModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('sudokuModal')">&times;</span>
+            <h2 style="color: #10b981; margin-bottom: 5px;">🧩 Kozmik Sudoku</h2>
+            <p style="font-size: 13px; color: #8b949e; margin-bottom: 15px;">Boş hücreleri seç ve aşağıdaki sayılarla doldur!</p>
+
+            <div class="sudoku-container">
+                <div class="sudoku-grid" id="sudokuGrid"></div>
+                
+                <div class="sudoku-numbers">
+                    <button class="sudoku-num-btn" onclick="fillSelectedCell(1)">1</button>
+                    <button class="sudoku-num-btn" onclick="fillSelectedCell(2)">2</button>
+                    <button class="sudoku-num-btn" onclick="fillSelectedCell(3)">3</button>
+                    <button class="sudoku-num-btn" onclick="fillSelectedCell(4)">4</button>
+                    <button class="sudoku-num-btn" onclick="fillSelectedCell(5)">5</button>
+                    <button class="sudoku-num-btn" onclick="fillSelectedCell(6)">6</button>
+                    <button class="sudoku-num-btn" onclick="fillSelectedCell(7)">7</button>
+                    <button class="sudoku-num-btn" onclick="fillSelectedCell(8)">8</button>
+                    <button class="sudoku-num-btn" onclick="fillSelectedCell(9)">9</button>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <button class="action-btn" style="background: #ef4444;" onclick="clearSelectedCell()">SİL</button>
+                <button class="action-btn" style="background: #10b981;" onclick="checkSudokuSolution()">KONTROL ET</button>
+            </div>
+            <button class="action-btn" style="margin-top: 10px; background: #3b82f6;" onclick="initSudokuGame()">YENİ BULMACA</button>
+            <p id="sudokuResult" style="margin-top: 15px; font-weight: bold; min-height: 20px;"></p>
+        </div>
+    </div>
+
+    <script>
+        // MODAL KONTROLLERİ
+        function openModal(id) {
+            document.getElementById(id).style.display = 'flex';
+            if (id === 'guessModal') {
+                resetGuessGame();
+            } else if (id === 'memoryModal') {
+                initMemoryGame();
+            } else if (id === 'sudokuModal') {
+                initSudokuGame();
+            }
+        }
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+            if(id === 'ageModal') clearInterval(dashboardTimer);
+        }
+
+        // TAHMİN OYUNU SİSTEMİ (6 HAK SINIRLI)
+        let targetNum;
+        let maxAttempts = 6;
+        let attemptsLeft = 6;
+        let attemptsMade = 0;
+
+        function resetGuessGame() {
+            targetNum = Math.floor(Math.random() * 100) + 1;
+            attemptsLeft = maxAttempts;
+            attemptsMade = 0;
+            document.getElementById('remainingAttempts').innerText = attemptsLeft;
+            document.getElementById('madeAttempts').innerText = attemptsMade;
+            document.getElementById('guessInput').value = '';
+            document.getElementById('guessResult').innerText = '';
+            document.getElementById('guessInputArea').style.display = 'block';
+            document.getElementById('restartGameBtn').style.display = 'none';
+        }
+
+        function playGuessGame() {
+            const inputField = document.getElementById('guessInput');
+            const val = parseInt(inputField.value);
+            const res = document.getElementById('guessResult');
+            
+            if (isNaN(val) || val < 1 || val > 100) {
+                res.innerText = "⚠️ Lütfen 1 ile 100 arasında geçerli bir sayı gir!";
+                res.style.color = "#f59e0b";
+                return;
+            }
+
+            attemptsMade++;
+            attemptsLeft--;
+            document.getElementById('remainingAttempts').innerText = attemptsLeft;
+            document.getElementById('madeAttempts').innerText = attemptsMade;
+
+            if (val === targetNum) {
+                res.innerHTML = `🎉 TEBRİKLER! Sayıyı buldun: <strong>${targetNum}</strong><br>Toplamda <strong>${attemptsMade}</strong> tahminde başardın.`;
+                res.style.color = "#10b981";
+                document.getElementById('guessInputArea').style.display = 'none';
+                document.getElementById('restartGameBtn').style.display = 'block';
+            } else if (attemptsLeft === 0) {
+                res.innerHTML = `😢 MAALESEF KAYBETTİN!<br>Hakların bitti. Tuttuğumuz sayı: <strong>${targetNum}</strong> idi.`;
+                res.style.color = "#ef4444";
+                document.getElementById('guessInputArea').style.display = 'none';
+                document.getElementById('restartGameBtn').style.display = 'block';
+            } else {
+                if (val < targetNum) {
+                    res.innerText = "📈 Daha BÜYÜK bir sayı girmelisin!";
+                    res.style.color = "#3b82f6";
+                } else {
+                    res.innerText = "📉 Daha KÜÇÜK bir sayı girmelisin!";
+                    res.style.color = "#3b82f6";
+                }
+            }
+            inputField.value = '';
+        }
+
+        // BURÇ HESAPLAMA FONKSİYONU
+        function getZodiacSign(day, month) {
+            const signs = [
+                { name: "Oğlak ♑ (Toprak)", day: 20, month: 1 },
+                { name: "Kova ♒ (Hava)", day: 19, month: 2 },
+                { name: "Balık ♓ (Su)", day: 20, month: 3 },
+                { name: "Koç ♈ (Ateş)", day: 20, month: 4 },
+                { name: "Boğa ♉ (Toprak)", day: 21, month: 5 },
+                { name: "İkizler ♊ (Hava)", day: 21, month: 6 },
+                { name: "Yengeç ♋ (Su)", day: 22, month: 7 },
+                { name: "Aslan ♌ (Ateş)", day: 22, month: 8 },
+                { name: "Başak ♍ (Toprak)", day: 23, month: 9 },
+                { name: "Terazi ♎ (Hava)", day: 23, month: 10 },
+                { name: "Akrep ♏ (Su)", day: 22, month: 11 },
+                { name: "Yay ♐ (Ateş)", day: 21, month: 12 },
+                { name: "Oğlak ♑ (Toprak)", day: 31, month: 12 }
+            ];
+            
+            if (day <= signs[month - 1].day) {
+                return signs[month - 2] ? signs[month - 2].name : signs[11].name;
+            } else {
+                return signs[month - 1].name;
+            }
+        }
+
+        // ÇİN BURCU HESAPLAMA
+        function getChineseZodiac(year) {
+            const animals = ["Maymun 🐒", "Horoz 🐓", "Köpek 🐕", "Domuz 🐖", "Fare 🐀", "Öküz 🐂", "Kaplan 🐅", "Tavşan 🐇", "Ejderha 🐉", "Yılan 🐍", "At 🐎", "Koyun 🐑"];
+            return animals[year % 12];
+        }
+
+        // KUŞAK/NESİL HESAPLAMA
+        function getGeneration(year) {
+            if (year >= 2013) return "Alpha Kuşağı 👶";
+            if (year >= 1997) return "Z Kuşağı (Gen Z) ⚡";
+            if (year >= 1981) return "Y Kuşağı (Millennial) 💻";
+            if (year >= 1965) return "X Kuşağı 🛠️";
+            return "Baby Boomer 🏛️";
+        }
+
+        // BİR SONRAKİ DOĞUM GÜNÜNE KALAN GÜN
+        function getDaysToNextBirthday(birthDate) {
+            const today = new Date();
+            const nextBirthday = new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate());
+            
+            if (today > nextBirthday) {
+                nextBirthday.setFullYear(today.getFullYear() + 1);
+            }
+            
+            const oneDayMs = 24 * 60 * 60 * 1000;
+            return Math.ceil((nextBirthday - today) / oneDayMs);
+        }
+
+        // DASHBOARD MOTORU
+        let dashboardTimer;
+        function startDashboard() {
+            const dateVal = document.getElementById('birthDateInput').value;
+            if(!dateVal) return;
+
+            const birthDate = new Date(dateVal);
+            const birthYear = birthDate.getFullYear();
+            const birthMonth = birthDate.getMonth() + 1;
+            const birthDay = birthDate.getDate();
+
+            document.getElementById('ageInputArea').style.display = 'none';
+            document.getElementById('dashboardDisplay').style.display = 'block';
+
+            document.getElementById('valZodiac').innerText = getZodiacSign(birthDay, birthMonth);
+            document.getElementById('valChinese').innerText = getChineseZodiac(birthYear);
+            document.getElementById('valGeneration').innerText = getGeneration(birthYear);
+
+            dashboardTimer = setInterval(() => {
+                const now = new Date();
+                const diffMs = now - birthDate;
+                const totalSec = Math.floor(diffMs / 1000);
+                
+                document.getElementById('liveSec').innerText = totalSec.toLocaleString('tr-TR');
+                document.getElementById('valHeart').innerText = (totalSec * 1.3).toLocaleString('tr-TR', {maximumFractionDigits: 0});
+                document.getElementById('valBreath').innerText = (totalSec * 0.26).toLocaleString('tr-TR', {maximumFractionDigits: 0});
+                document.getElementById('valEarth').innerText = (totalSec * 30).toLocaleString('tr-TR');
+                document.getElementById('valAge').innerText = (now.getFullYear() - birthYear);
+                document.getElementById('valNextBirthday').innerText = getDaysToNextBirthday(birthDate) + " Gün";
+            }, 1000);
+        }
+
+        // HAFIZA OYUNU
+        const spaceEmojis = ['🚀', '🚀', '🛸', '🛸', '👾', '👾', '⏳', '⏳', '🪐', '🪐', '🛰️', '🛰️', '🌀', '🌀', '🔋', '🔋'];
+        let selectedCards = [];
+        let matchedPairs = 0;
+        let totalMoves = 0;
+        let isWaiting = false;
+
+        function initMemoryGame() {
+            const grid = document.getElementById('memoryGrid');
+            const resultMsg = document.getElementById('memoryResult');
+            grid.innerHTML = '';
+            resultMsg.innerText = '';
+            selectedCards = [];
+            matchedPairs = 0;
+            totalMoves = 0;
+            isWaiting = false;
+            
+            document.getElementById('memoryMoves').innerText = totalMoves;
+            document.getElementById('memoryMatches').innerText = '0/8';
+
+            const shuffled = [...spaceEmojis].sort(() => Math.random() - 0.5);
+
+            shuffled.forEach((emoji, index) => {
+                const card = document.createElement('div');
+                card.classList.add('memory-card');
+                card.dataset.emoji = emoji;
+                card.dataset.index = index;
+                card.innerText = '❓';
+                card.addEventListener('click', () => handleCardClick(card));
+                grid.appendChild(card);
+            });
+        }
+
+        function handleCardClick(card) {
+            if (isWaiting || card.classList.contains('flipped') || card.classList.contains('matched')) {
+                return;
+            }
+
+            card.innerText = card.dataset.emoji;
+            card.classList.add('flipped');
+            selectedCards.push(card);
+
+            if (selectedCards.length === 2) {
+                totalMoves++;
+                document.getElementById('memoryMoves').innerText = totalMoves;
+                isWaiting = true;
+
+                const [card1, card2] = selectedCards;
+
+                if (card1.dataset.emoji === card2.dataset.emoji) {
+                    card1.classList.add('matched');
+                    card2.classList.add('matched');
+                    matchedPairs++;
+                    document.getElementById('memoryMatches').innerText = `${matchedPairs}/8`;
+                    selectedCards = [];
+                    isWaiting = false;
+
+                    if (matchedPairs === 8) {
+                        document.getElementById('memoryResult').innerText = `🎉 Tebrikler Güney! Oyunu ${totalMoves} hamlede bitirdin!`;
+                    }
+                } else {
+                    setTimeout(() => {
+                        card1.innerText = '❓';
+                        card2.innerText = '❓';
+                        card1.classList.remove('flipped');
+                        card2.classList.remove('flipped');
+                        selectedCards = [];
+                        isWaiting = false;
+                    }, 1000);
+                }
+            }
+        }
+
+        // 7. KOZMİK SUDOKU SİSTEMİ
+        let selectedCell = null;
+        let sudokuSolution = [];
+        let sudokuPuzzle = [];
+
+        // Örnek bir geçerli hazır Sudoku tahtası ve maskesi
+        const baseSolution = [
+            [5,3,4,6,7,8,9,1,2],
+            [6,7,2,1,9,5,3,4,8],
+            [1,9,8,3,4,2,5,6,7],
+            [8,5,9,7,6,1,4,2,3],
+            [4,2,6,8,5,3,7,9,1],
+            [7,1,3,9,2,4,8,5,6],
+            [9,6,1,5,3,7,2,8,4],
+            [2,8,7,4,1,9,6,3,5],
+            [3,4,5,2,8,6,1,7,9]
+        ];
+
+        function initSudokuGame() {
+            const grid = document.getElementById('sudokuGrid');
+            const resultMsg = document.getElementById('sudokuResult');
+            grid.innerHTML = '';
+            resultMsg.innerText = '';
+            selectedCell = null;
+
+            // Çözümü derin kopyalayalım
+            sudokuSolution = JSON.parse(JSON.stringify(baseSolution));
+            sudokuPuzzle = JSON.parse(JSON.stringify(baseSolution));
+
+            // Hücrelerin yaklaşık yarısını boşaltalım (Oynanabilir hale getirmek için)
+            for (let r = 0; r < 9; r++) {
+                for (let c = 0; c < 9; c++) {
+                    if (Math.random() > 0.45) {
+                        sudokuPuzzle[r][c] = 0;
+                    }
+                }
+            }
+
+            // Arayüzü oluştur
+            for (let r = 0; r < 9; r++) {
+                for (let c = 0; c < 9; c++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('sudoku-cell');
+                    cell.dataset.row = r;
+                    cell.dataset.col = c;
+
+                    const val = sudokuPuzzle[r][c];
+                    if (val !== 0) {
+                        cell.innerText = val;
+                        cell.style.color = '#8b949e'; // Hazır sayılar gri dursun
+                    } else {
+                        cell.innerText = '';
+                        cell.classList.add('user-filled');
+                        cell.addEventListener('click', () => selectSudokuCell(cell));
+                    }
+                    grid.appendChild(cell);
+                }
+            }
+        }
+
+        function selectSudokuCell(cell) {
+            if (selectedCell) {
+                selectedCell.classList.remove('selected');
+            }
+            selectedCell = cell;
+            cell.classList.add('selected');
+        }
+
+        function fillSelectedCell(num) {
+            if (!selectedCell) {
+                document.getElementById('sudokuResult').innerText = '⚠️ Lütfen önce boş bir hücreye tıkla!';
+                document.getElementById('sudokuResult').style.color = '#f59e0b';
+                return;
+            }
+            document.getElementById('sudokuResult').innerText = '';
+            selectedCell.innerText = num;
+            
+            const r = parseInt(selectedCell.dataset.row);
+            const c = parseInt(selectedCell.dataset.col);
+            sudokuPuzzle[r][c] = num;
+        }
+
+        function clearSelectedCell() {
+            if (selectedCell) {
+                selectedCell.innerText = '';
+                const r = parseInt(selectedCell.dataset.row);
+                const c = parseInt(selectedCell.dataset.col);
+                sudokuPuzzle[r][c] = 0;
+            }
+        }
+
+        function checkSudokuSolution() {
+            let win = true;
+            const cells = document.querySelectorAll('.sudoku-cell');
+            
+            for (let r = 0; r < 9; r++) {
+                for (let c = 0; c < 9; c++) {
+                    if (sudokuPuzzle[r][c] !== sudokuSolution[r][c]) {
+                        win = false;
+                        break;
+                    }
+                }
+            }
+
+            const res = document.getElementById('sudokuResult');
+            if (win) {
+                res.innerText = '🎉 TEBRİKLER! Sudoku bulmacasını hatasız tamamladın!';
+                res.style.color = '#10b981';
+            } else {
+                res.innerText = '❌ Maalesef bazı sayılar yanlış yerde ya da eksikler var, tekrar dene!';
+                res.style.color = '#ef4444';
+            }
+        }
+    </script>
+</body>
+</html>
