@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GüneyKing Uygulamaları</title>
+    <title>GÜNEYKING | Zaman ve Mekân</title>
     <style>
+        /* 1. KURULUM VE SAAT TEMASI */
         * {
             margin: 0;
             padding: 0;
@@ -12,175 +13,176 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         body {
-            background-color: #f4f6f9;
-            color: #333;
+            background-color: #0d1117; /* Derin siyah arka plan */
+            color: #f5f5f5;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
         }
-        /* Mavi Üst Menü */
+        
+        /* Dinamik Arka Plan: Saat Grid Efekti */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59, 130, 246, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+        }
+
+        /* 2. NAVBAR */
         .navbar {
-            background-color: #0066ff;
-            color: white;
-            padding: 15px 5%;
+            background-color: rgba(13, 17, 23, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #30363d;
+            padding: 20px 8%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
         .navbar .logo {
-            font-size: 24px;
-            font-weight: bold;
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #3b82f6;
         }
         .navbar nav a {
-            color: white;
+            color: #94a3b8;
             text-decoration: none;
-            margin-left: 20px;
+            margin-left: 25px;
             font-weight: 500;
             transition: 0.3s;
         }
-        .navbar nav a:hover {
-            opacity: 0.8;
-        }
-        /* Kartların Alanı */
+        .navbar nav a:hover { color: #3b82f6; }
+
+        /* 3. KARTLAR ALANI */
         .container {
-            max-width: 1200px;
-            margin: 40px auto;
+            max-width: 1100px;
+            margin: 60px auto;
             padding: 0 20px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
         }
-        /* Uygulama Kart Tasarımı */
+
         .card {
-            background: white;
-            border-radius: 12px;
+            background: #161b22;
+            border-radius: 20px;
+            border: 1px solid #30363d;
             overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: flex;
             flex-direction: column;
-            border: 1px solid #e1e8ed;
         }
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transform: translateY(-10px);
+            border-color: #3b82f6;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.15);
         }
         .card-img {
-            width: 100%;
-            height: 160px;
-            background-color: #ddd;
+            height: 180px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 40px;
+            font-size: 50px;
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+            border-bottom: 1px solid #30363d;
         }
-        /* Kart Renkleri */
-        .bg-2 { background-color: #e8f5e9; }
-        .bg-3 { background-color: #fff3e0; }
-
-        .card-content {
-            padding: 20px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        .card-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #111;
-        }
-        .card-desc {
-            font-size: 14px;
-            color: #666;
-            line-height: 1.5;
-            margin-bottom: 20px;
-            flex-grow: 1;
-        }
+        .card-content { padding: 30px; flex-grow: 1; }
+        .card-title { font-size: 22px; font-weight: 700; margin-bottom: 15px; color: #f5f5f5; }
+        .card-desc { font-size: 15px; color: #8b949e; line-height: 1.6; margin-bottom: 25px; }
+        
         .card-btn {
-            display: block;
-            text-align: center;
-            background-color: #0066ff;
-            color: white;
-            padding: 10px;
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: bold;
+            width: 100%;
+            background: transparent;
+            color: #3b82f6;
+            border: 1px solid #3b82f6;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 700;
             cursor: pointer;
-            border: none;
-            font-size: 14px;
             transition: 0.3s;
         }
-        .card-btn:hover {
-            background-color: #0052cc;
-        }
+        .card-btn:hover { background: #3b82f6; color: white; }
 
-        /* --- OYUN PENCERELERİ (MODAL) --- */
+        /* 4. MODALLAR (PENCERELER) */
         .modal {
-            display: none; /* Başlangıçta gizli */
+            display: none;
             position: fixed;
             z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            align-items: center;
-            justify-content: center;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px);
+            align-items: center; justify-content: center;
         }
         .modal-content {
-            background-color: white;
-            padding: 30px;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 450px;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+            background: #0d1117;
+            border: 1px solid #3b82f6;
+            border-radius: 24px;
+            width: 90%; max-width: 500px;
+            padding: 40px;
             position: relative;
             text-align: center;
+            box-shadow: 0 0 50px rgba(59, 130, 246, 0.2);
         }
         .close-btn {
-            position: absolute;
-            right: 20px;
-            top: 15px;
-            font-size: 28px;
-            cursor: pointer;
-            color: #aaa;
-        }
-        .close-btn:hover {
-            color: black;
+            position: absolute; right: 25px; top: 20px;
+            font-size: 30px; cursor: pointer; color: #8b949e;
         }
 
-        /* Uygulama İçi Tasarımlar */
-        .game-input {
+        /* GİRİŞ ELEMANLARI */
+        .input-group { margin: 20px 0; }
+        input {
             width: 100%;
-            padding: 12px;
-            margin: 15px 0;
-            border: 2px solid #e1e8ed;
-            border-radius: 8px;
-            font-size: 16px;
+            padding: 15px;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            color: white;
+            font-size: 18px;
             text-align: center;
             outline: none;
         }
-        .game-input:focus {
-            border-color: #0066ff;
-        }
+        input:focus { border-color: #3b82f6; }
+        
         .action-btn {
-            background-color: #0066ff;
+            background: #3b82f6;
             color: white;
-            padding: 12px 25px;
             border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
+            padding: 15px;
             width: 100%;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
             font-size: 16px;
         }
-        .action-btn:hover {
-            background-color: #0052cc;
+
+        /* YAŞAM DASHBOARDU TASARIMI */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 25px;
         }
-        .result-box {
-            margin-top: 15px;
-            font-size: 16px;
-            font-weight: 500;
-            min-height: 24px;
+        .metric-box {
+            background: #161b22;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #30363d;
+        }
+        .metric-val { font-size: 18px; font-weight: 700; color: #3b82f6; margin-bottom: 5px; }
+        .metric-lbl { font-size: 11px; color: #8b949e; text-transform: uppercase; }
+        .live-seconds {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 28px;
+            color: #f5f5f5;
+            margin: 20px 0;
+            letter-spacing: 2px;
         }
     </style>
 </head>
@@ -198,20 +200,20 @@
 
     <div class="container">
         <div class="card">
-            <div class="card-img bg-2">🔢</div>
+            <div class="card-img">🔢</div>
             <div class="card-content">
                 <div class="card-title">Sayı Tahmin Oyunu</div>
-                <div class="card-desc">Bilgisayarın 1-100 arasında tuttuğu sayıyı en az hamlede tahmin etmeye çalış.</div>
-                <button class="card-btn" onclick="openModal('guessModal')">Oyunu Oyna</button>
+                <div class="card-desc">1 ile 100 arasında bir sayı tuttuk. Bakalım kaç hamlede bulabileceksin?</div>
+                <button class="card-btn" onclick="openModal('guessModal')">OYUNU BAŞLAT</button>
             </div>
         </div>
 
         <div class="card">
-            <div class="card-img bg-3">⏳</div>
+            <div class="card-img">⏳</div>
             <div class="card-content">
-                <div class="card-title">Zaman Yolculuğu</div>
-                <div class="card-desc">Doğum yılını girerek bugüne kadar kaç gün yaşadığını ve eğlenceli yaş analizlerini gör.</div>
-                <button class="card-btn" onclick="openModal('ageModal')">Hesaplamayı Aç</button>
+                <div class="card-title">Zaman Yolculuğu 2.0</div>
+                <div class="card-desc">Biyometrik verilerini ve kozmik mesafeni anlık olarak takip et.</div>
+                <button class="card-btn" onclick="openModal('ageModal')">DASHBOARD'U AÇ</button>
             </div>
         </div>
     </div>
@@ -219,182 +221,94 @@
     <div id="guessModal" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal('guessModal')">&times;</span>
-            <h2>🔢 Sayı Tahmin Oyunu</h2>
-            <p style="margin-top: 10px; color: #666;">1 ile 100 arasında bir sayı tuttuk!</p>
-            <input type="number" id="guessInput" class="game-input" placeholder="Tahminini yaz...">
-            <button class="action-btn" onclick="playGuessGame()">Tahmin Et</button>
-            <div id="guessResult" class="result-box"></div>
+            <h2 style="color: #3b82f6; margin-bottom: 10px;">🔢 Sayı Tahmin</h2>
+            <div class="input-group">
+                <input type="number" id="guessInput" placeholder="Tahminini yaz...">
+            </div>
+            <button class="action-btn" onclick="playGuessGame()">TAHMİN ET</button>
+            <p id="guessResult" style="margin-top: 20px; font-weight: 500;"></p>
         </div>
     </div>
 
     <div id="ageModal" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal('ageModal')">&times;</span>
-            <h2>⏳ Zaman Yolculuğu</h2>
-            <p style="margin-top: 10px; color: #666;">Doğum yılını girerek zaman yolculuğunu başlat!</p>
-            <input type="number" id="birthYearInput" class="game-input" placeholder="Örn: 2010" min="1900" max="2026">
-            <button class="action-btn" onclick="calculateAge()">Zamanı Hesapla</button>
-            <div id="ageResult" class="result-box" style="line-height: 1.6;"></div>
+            <h2 style="color: #3b82f6; margin-bottom: 10px;">⏳ Yaşam Dashboard</h2>
+            <div id="ageInputArea">
+                <div class="input-group">
+                    <input type="number" id="birthYearInput" placeholder="Doğum Yılın (Örn: 2010)">
+                </div>
+                <button class="action-btn" onclick="startDashboard()">DASHBOARD'U AKTİF ET</button>
+            </div>
+            
+            <div id="dashboardDisplay" style="display: none;">
+                <div class="live-seconds" id="liveSec">000000000</div>
+                <p style="font-size: 12px; color: #8b949e;">DÜNYADA GEÇEN TOPLAM SANİYE</p>
+                
+                <div class="dashboard-grid">
+                    <div class="metric-box">
+                        <div class="metric-val" id="valHeart">0</div>
+                        <div class="metric-lbl">Kalp Atışı</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-val" id="valBreath">0</div>
+                        <div class="metric-lbl">Nefes Sayısı</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-val" id="valEarth">0</div>
+                        <div class="metric-lbl">Kozmik Yol (km)</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-val" id="valAge">0</div>
+                        <div class="metric-lbl">Mevcut Yaşın</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // Pencereleri Açma/Kapama Fonksiyonları
+        // MODAL KONTROLLERİ
         function openModal(id) {
             document.getElementById(id).style.display = 'flex';
-            if(id === 'guessModal') {
-                resetGuessGame();
-            }
         }
         function closeModal(id) {
             document.getElementById(id).style.display = 'none';
+            if(id === 'ageModal') clearInterval(dashboardTimer);
         }
 
-        // --- SAYI TAHMİN OYUNU KODLARI ---
-        let targetNumber;
-        let attempts;
-
-        function resetGuessGame() {
-            targetNumber = Math.floor(Math.random() * 100) + 1;
-            attempts = 0;
-            document.getElementById('guessInput').value = '';
-            document.getElementById('guessResult').innerHTML = 'İlk tahminini yap bakalım!';
-            document.getElementById('guessResult').style.color = '#333';
-        }
-
+        // TAHMİN OYUNU
+        let targetNum = Math.floor(Math.random() * 100) + 1;
         function playGuessGame() {
-            const input = document.getElementById('guessInput');
-            const result = document.getElementById('guessResult');
-            const userGuess = parseInt(input.value);
-
-            if (isNaN(userGuess) || userGuess < 1 || userGuess > 100) {
-                result.innerHTML = "Lütfen 1 ile 100 arasında geçerli bir sayı gir.";
-                result.style.color = "red";
-                return;
-            }
-
-            attempts++;
-
-            if (userGuess === targetNumber) {
-                result.innerHTML = `🎉 Tebrikler! Sayıyı ${attempts} denemede buldun!`;
-                result.style.color = "green";
-            } else if (userGuess < targetNumber) {
-                result.innerHTML = "📈 Daha BÜYÜK bir sayı dene!";
-                result.style.color = "#ff9900";
-            } else {
-                result.innerHTML = "📉 Daha KÜÇÜK bir sayı dene!";
-                result.style.color = "#ff9900";
-            }
+            const val = parseInt(document.getElementById('guessInput').value);
+            const res = document.getElementById('guessResult');
+            if(val === targetNum) { res.innerText = "🎉 BULDUN! Tebrikler."; res.style.color = "green"; }
+            else if(val < targetNum) { res.innerText = "📈 Daha BÜYÜK bir sayı!"; res.style.color = "#3b82f6"; }
+            else { res.innerText = "📉 Daha KÜÇÜK bir sayı!"; res.style.color = "#f44336"; }
         }
 
-        // --- ZAMAN YOLCULUĞU KODLARI ---
-        function calculateAge() {
-            const input = document.getElementById('birthYearInput');
-            const result = document.getElementById('ageResult');
-            const birthYear = parseInt(input.value);
-            const currentYear = new Date().getFullYear();
+        // DASHBOARD MANTIĞI
+        let dashboardTimer;
+        function startDashboard() {
+            const year = parseInt(document.getElementById('birthYearInput').value);
+            if(!year || year < 1900 || year > 2026) return;
 
-            if (isNaN(birthYear) || birthYear < 1900 || birthYear > currentYear) {
-                result.innerHTML = "Lütfen geçerli bir doğum yılı giriniz.";
-                result.style.color = "red";
-                return;
-            }
+            document.getElementById('ageInputArea').style.display = 'none';
+            document.getElementById('dashboardDisplay').style.display = 'block';
 
-            const age = currentYear - birthYear;
-            const daysLived = age * 365; // Ortalama artık yılları hesaba katmadan temel hesap
-            const hoursLived = daysLived * 24;
-
-            result.innerHTML = `
-                <div style="text-align: left; background: #f0f4f8; padding: 15px; border-radius: 8px; margin-top: 15px;">
-                    <p>📅 <strong>Yaşın:</strong> ${age} yaşındasın.</p>
-                    <p>☀️ <strong>Dünyada Geçirdiğin Süre:</strong> ~${daysLived.toLocaleString('tr-TR')} gündür hayattasın.</p>
-                    <p>⏰ <strong>Toplam Saat:</strong> ~${hoursLived.toLocaleString('tr-TR')} saattir nefes alıyorsun.</p>
-                </div>
-            `;
-            result.style.color = "#333";
+            dashboardTimer = setInterval(() => {
+                const now = new Date();
+                const birth = new Date(year, 0, 1);
+                const diffMs = now - birth;
+                const totalSec = Math.floor(diffMs / 1000);
+                
+                document.getElementById('liveSec').innerText = totalSec.toLocaleString('tr-TR');
+                document.getElementById('valHeart').innerText = (totalSec * 1.3).toLocaleString('tr-TR', {maximumFractionDigits: 0});
+                document.getElementById('valBreath').innerText = (totalSec * 0.26).toLocaleString('tr-TR', {maximumFractionDigits: 0});
+                document.getElementById('valEarth').innerText = (totalSec * 30).toLocaleString('tr-TR');
+                document.getElementById('valAge').innerText = (now.getFullYear() - year);
+            }, 1000);
         }
     </script>
-</body>
-</html>        }
-        .card-img {
-            width: 100%;
-            height: 160px;
-            background-color: #ddd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-        }
-        /* Kart Renkleri */
-        .bg-2 { background-color: #e8f5e9; }
-        .bg-3 { background-color: #fff3e0; }
-
-        .card-content {
-            padding: 20px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        .card-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #111;
-        }
-        .card-desc {
-            font-size: 14px;
-            color: #666;
-            line-height: 1.5;
-            margin-bottom: 20px;
-            flex-grow: 1;
-        }
-        .card-btn {
-            display: block;
-            text-align: center;
-            background-color: #0066ff;
-            color: white;
-            padding: 10px;
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-        .card-btn:hover {
-            background-color: #0052cc;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="navbar">
-        <div class="logo">GÜNEYKING</div>
-        <nav>
-            <a href="#">Ana Sayfa</a>
-            <a href="#">Uygulamalar</a>
-            <a href="#">Hakkında</a>
-            <a href="#">İletişim</a>
-        </nav>
-    </div>
-
-    <div class="container">
-        <div class="card">
-            <div class="card-img bg-2">🔢</div>
-            <div class="card-content">
-                <div class="card-title">Sayı Tahmin Oyunu</div>
-                <div class="card-desc">Bilgisayarın tuttuğu sayıyı en az hamlede tahmin etmeye çalıştığın eğlenceli oyun.</div>
-                <a href="https://guney-web-site-ouheqpgj6nwz6cbb3v6kkj.streamlit.app/" target="_blank" class="card-btn">Oyuna Git</a>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-img bg-3">⏳</div>
-            <div class="card-content">
-                <div class="card-title">Zaman Yolculuğu</div>
-                <div class="card-desc">Doğum yılını girerek geçmişe veya geleceğe yönelik eğlenceli yaş hesaplamaları yap.</div>
-                <a href="https://guney-web-site-ouheqpgj6nwz6cbb3v6kkj.streamlit.app/" target="_blank" class="card-btn">Uygulamayı Aç</a>
-            </div>
-        </div>
-    </div>
-
 </body>
 </html>
