@@ -32,14 +32,14 @@
             z-index: -1;
         }
 
-        /* 2. NAVBAR */
+        /* 2. NAVBAR (Menü Linkleri Kaldırıldı) */
         .navbar {
             background-color: rgba(13, 17, 23, 0.95);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid #30363d;
             padding: 20px 8%;
             display: flex;
-            justify-content: space-between;
+            justify-content: center; /* Başlığı ortalayarak şık bir görünüm veriyoruz */
             align-items: center;
             position: sticky;
             top: 0;
@@ -51,14 +51,6 @@
             letter-spacing: 2px;
             color: #3b82f6;
         }
-        .navbar nav a {
-            color: #94a3b8;
-            text-decoration: none;
-            margin-left: 25px;
-            font-weight: 500;
-            transition: 0.3s;
-        }
-        .navbar nav a:hover { color: #3b82f6; }
 
         /* 3. KARTLAR ALANI */
         .container {
@@ -116,17 +108,17 @@
             line-height: 1;
         }
         .neon-62 span {
-            font-size: 80px; /* Her iki rakamın da boyutu tamamen eşitlendi */
+            font-size: 80px;
             display: inline-block;
         }
 
-        /* Fütüristik OVAL Kum Saati Efekti */
+        /* FÜTÜRİSTİK KESKİN KUM SAATİ (ESKİSİ GİBİ!) */
         .cyber-hourglass {
             position: relative;
-            width: 55px;
-            height: 85px;
-            border: 4px solid #00f0ff;
-            border-radius: 25px; /* Dış çerçeve daha ovalleştirildi */
+            width: 50px;
+            height: 80px;
+            border: 3.5px solid #00f0ff;
+            border-radius: 8px; /* Dikdörtgen, keskin köşeler */
             box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
             animation: flip 6s ease-in-out infinite;
             display: flex;
@@ -134,19 +126,19 @@
             justify-content: space-between;
             padding: 4px;
         }
-        /* Oval İç Hazneler */
+        /* Keskin Üçgen İç Hazneler */
         .hourglass-top, .hourglass-bottom {
             width: 100%;
-            height: 34px;
+            height: 32px;
             background: #00f0ff;
             filter: drop-shadow(0 0 5px #00f0ff);
             transition: 0.5s;
         }
         .hourglass-top {
-            border-radius: 15px 15px 5px 5px; /* Üst hazne oval yapıldı */
+            clip-path: polygon(0 0, 100% 0, 50% 100%); /* Tam keskin aşağı bakan üçgen */
         }
         .hourglass-bottom {
-            border-radius: 5px 5px 15px 15px; /* Alt hazne oval yapıldı */
+            clip-path: polygon(50% 0, 0 100%, 100% 100%); /* Tam keskin yukarı bakan üçgen */
         }
         @keyframes flip {
             0%, 90% { transform: rotate(0deg); }
@@ -398,12 +390,6 @@
 
     <div class="navbar">
         <div class="logo">GÜNEYKING</div>
-        <nav>
-            <a href="#">Ana Sayfa</a>
-            <a href="#">Uygulamalar</a>
-            <a href="#">Hakkında</a>
-            <a href="#">İletişim</a>
-        </nav>
     </div>
 
     <div class="container">
@@ -493,7 +479,7 @@
             <div id="ageInputArea">
                 <p style="font-size: 14px; color: #8b949e; margin-bottom: 15px;">Doğum tarihini girerek kozmik ve biyometrik verilerini keşfet:</p>
                 <div class="input-group">
-                    <input type="date" id="birthDateInput" max="2026-07-14">
+                    <input type="date" id="birthDateInput" max="2026-07-15">
                 </div>
                 <button class="action-btn" onclick="startDashboard()">DASHBOARD'U AKTİF ET</button>
             </div>
@@ -606,7 +592,7 @@
             if(id === 'ageModal') clearInterval(dashboardTimer);
         }
 
-        // TAHMİN OYUNU SİSTEMİ (6 HAK SINIRLI)
+        // TAHMİN OYUNU SİSTEMİ
         let targetNum;
         let maxAttempts = 6;
         let attemptsLeft = 6;
@@ -641,12 +627,12 @@
             document.getElementById('madeAttempts').innerText = attemptsMade;
 
             if (val === targetNum) {
-                res.innerHTML = `🎉 TEBRİKLER! Sayıyı buldun: <strong>${targetNum}</strong><br>Toplamda <strong>${attemptsMade}</strong> tahminde başardın.`;
+                res.innerHTML = `🎉 TEBRİKLER! Sayıyı buldun: <strong>${targetNum}</strong>`;
                 res.style.color = "#10b981";
                 document.getElementById('guessInputArea').style.display = 'none';
                 document.getElementById('restartGameBtn').style.display = 'block';
             } else if (attemptsLeft === 0) {
-                res.innerHTML = `😢 MAALESEF KAYBETTİN!<br>Hakların bitti. Tuttuğumuz sayı: <strong>${targetNum}</strong> idi.`;
+                res.innerHTML = `😢 MAALESEF KAYBETTİN!<br>Tuttuğumuz sayı: <strong>${targetNum}</strong> idi.`;
                 res.style.color = "#ef4444";
                 document.getElementById('guessInputArea').style.display = 'none';
                 document.getElementById('restartGameBtn').style.display = 'block';
@@ -662,7 +648,7 @@
             inputField.value = '';
         }
 
-        // BURÇ HESAPLAMA FONKSİYONU
+        // BURÇ VE ZODYAK HESAPLARI
         function getZodiacSign(day, month) {
             const signs = [
                 { name: "Oğlak ♑ (Toprak)", day: 20, month: 1 },
@@ -679,7 +665,6 @@
                 { name: "Yay ♐ (Ateş)", day: 21, month: 12 },
                 { name: "Oğlak ♑ (Toprak)", day: 31, month: 12 }
             ];
-            
             if (day <= signs[month - 1].day) {
                 return signs[month - 2] ? signs[month - 2].name : signs[11].name;
             } else {
@@ -687,13 +672,11 @@
             }
         }
 
-        // ÇİN BURCU HESAPLAMA
         function getChineseZodiac(year) {
             const animals = ["Maymun 🐒", "Horoz 🐓", "Köpek 🐕", "Domuz 🐖", "Fare 🐀", "Öküz 🐂", "Kaplan 🐅", "Tavşan 🐇", "Ejderha 🐉", "Yılan 🐍", "At 🐎", "Koyun 🐑"];
             return animals[year % 12];
         }
 
-        // KUŞAK/NESİL HESAPLAMA
         function getGeneration(year) {
             if (year >= 2013) return "Alpha Kuşağı 👶";
             if (year >= 1997) return "Z Kuşağı (Gen Z) ⚡";
@@ -702,20 +685,17 @@
             return "Baby Boomer 🏛️";
         }
 
-        // BİR SONRAKİ DOĞUM GÜNÜNE KALAN GÜN
         function getDaysToNextBirthday(birthDate) {
             const today = new Date();
             const nextBirthday = new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate());
-            
             if (today > nextBirthday) {
                 nextBirthday.setFullYear(today.getFullYear() + 1);
             }
-            
             const oneDayMs = 24 * 60 * 60 * 1000;
             return Math.ceil((nextBirthday - today) / oneDayMs);
         }
 
-        // DASHBOARD MOTORU
+        // YAŞAM DASHBOARDU SÜRECİ
         let dashboardTimer;
         function startDashboard() {
             const dateVal = document.getElementById('birthDateInput').value;
@@ -747,7 +727,7 @@
             }, 1000);
         }
 
-        // HAFIZA OYUNU
+        // KOZMİK EŞLEŞTİRME OYUNU
         const spaceEmojis = ['🚀', '🚀', '🛸', '🛸', '👾', '👾', '⏳', '⏳', '🪐', '🪐', '🛰️', '🛰️', '🌀', '🌀', '🔋', '🔋'];
         let selectedCards = [];
         let matchedPairs = 0;
@@ -805,7 +785,7 @@
                     isWaiting = false;
 
                     if (matchedPairs === 8) {
-                        document.getElementById('memoryResult').innerText = `🎉 Tebrikler Güney! Oyunu ${totalMoves} hamlede bitirdin!`;
+                        document.getElementById('memoryResult').innerText = `🎉 Tebrikler Güney! Oyunu bitirdin!`;
                     }
                 } else {
                     setTimeout(() => {
@@ -820,12 +800,11 @@
             }
         }
 
-        // 7. KOZMİK SUDOKU SİSTEMİ
+        // KOZMİK SUDOKU SİSTEMİ
         let selectedCell = null;
         let sudokuSolution = [];
         let sudokuPuzzle = [];
 
-        // Örnek bir geçerli hazır Sudoku tahtası ve maskesi
         const baseSolution = [
             [5,3,4,6,7,8,9,1,2],
             [6,7,2,1,9,5,3,4,8],
@@ -845,11 +824,9 @@
             resultMsg.innerText = '';
             selectedCell = null;
 
-            // Çözümü derin kopyalayalım
             sudokuSolution = JSON.parse(JSON.stringify(baseSolution));
             sudokuPuzzle = JSON.parse(JSON.stringify(baseSolution));
 
-            // Hücrelerin yaklaşık yarısını boşaltalım (Oynanabilir hale getirmek için)
             for (let r = 0; r < 9; r++) {
                 for (let c = 0; c < 9; c++) {
                     if (Math.random() > 0.45) {
@@ -858,7 +835,6 @@
                 }
             }
 
-            // Arayüzü oluştur
             for (let r = 0; r < 9; r++) {
                 for (let c = 0; c < 9; c++) {
                     const cell = document.createElement('div');
@@ -869,7 +845,7 @@
                     const val = sudokuPuzzle[r][c];
                     if (val !== 0) {
                         cell.innerText = val;
-                        cell.style.color = '#8b949e'; // Hazır sayılar gri dursun
+                        cell.style.color = '#8b949e';
                     } else {
                         cell.innerText = '';
                         cell.classList.add('user-filled');
@@ -888,6 +864,7 @@
             cell.classList.add('selected');
         }
 
+        // Sayı doldurma fonksiyonu düzeltildi
         function fillSelectedCell(num) {
             if (!selectedCell) {
                 document.getElementById('sudokuResult').innerText = '⚠️ Lütfen önce boş bir hücreye tıkla!';
@@ -896,7 +873,6 @@
             }
             document.getElementById('sudokuResult').innerText = '';
             selectedCell.innerText = num;
-            
             const r = parseInt(selectedCell.dataset.row);
             const c = parseInt(selectedCell.dataset.col);
             sudokuPuzzle[r][c] = num;
@@ -913,23 +889,20 @@
 
         function checkSudokuSolution() {
             let win = true;
-            const cells = document.querySelectorAll('.sudoku-cell');
-            
             for (let r = 0; r < 9; r++) {
-                for (let c = 0; c < 9; c++) {
-                    if (sudokuPuzzle[r][c] !== sudokuSolution[r][c]) {
+                for (let r_col = 0; r_col < 9; r_col++) {
+                    if (sudokuPuzzle[r][r_col] !== sudokuSolution[r][r_col]) {
                         win = false;
                         break;
                     }
                 }
             }
-
             const res = document.getElementById('sudokuResult');
             if (win) {
-                res.innerText = '🎉 TEBRİKLER! Sudoku bulmacasını hatasız tamamladın!';
+                res.innerText = '🎉 TEBRİKLER! Sudoku çözüldü!';
                 res.style.color = '#10b981';
             } else {
-                res.innerText = '❌ Maalesef bazı sayılar yanlış yerde ya da eksikler var, tekrar dene!';
+                res.innerText = '❌ Hatalı yerleşim var, tekrar kontrol et!';
                 res.style.color = '#ef4444';
             }
         }
