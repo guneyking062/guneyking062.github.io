@@ -1184,62 +1184,6 @@
             }
         }
 
-        // SBER SES SENTEZLEYİCİ SİSTEMİ (WEB AUDIO API)
-        let audioCtx = null;
-        let soundInterval = null;
-
-        function startCyberSounds() {
-            // Tarayıcının ses motorunu başlat
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-
-            // Düzenli aralıklarla rastgele "dijital veri akışı" sesleri çal
-            soundInterval = setInterval(() => {
-                if (!audioCtx || audioCtx.state === 'suspended') {
-                    audioCtx.resume();
-                }
-                
-                // Rastgele frekansta çok kısa bir siber bip sesi üret
-                playMatrixBeep();
-            }, 350); // Her 350ms'de bir minik bip ritmi
-        }
-
-        function stopCyberSounds() {
-            if (soundInterval) {
-                clearInterval(soundInterval);
-                soundInterval = null;
-            }
-        }
-
-        function playMatrixBeep() {
-            try {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                
-                // Matrix hissi için 'sine' (saf) yerine 'sawtooth' (testere dişli retro bilgisayar tınısı)
-                osc.type = Math.random() > 0.7 ? 'square' : 'sine'; 
-                
-                // Retro bilgisayar ses aralığında rastgele siber frekanslar
-                const frequencies = [440, 523, 587, 659, 880, 987, 1046, 1318];
-                const targetFreq = frequencies[Math.floor(Math.random() * frequencies.length)];
-                
-                osc.frequency.setValueAtTime(targetFreq, audioCtx.currentTime);
-                
-                // Sesi kulağı yormayacak kadar kısık (hafif bir arka plan fısıltısı gibi) yapıyoruz
-                gain.gain.setValueAtTime(0.015, audioCtx.currentTime); 
-                gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.15); // Ses yavaşça kaybolsun
-                
-                osc.start(audioCtx.currentTime);
-                osc.stop(audioCtx.currentTime + 0.15); // 0.15 saniye sürsün
-            } catch (e) {
-                console.log("Ses çalma hatası:", e);
-            }
-        }
-
         // MATRIX EFEKTİ SİSTEMİ
         const canvas = document.getElementById('matrixCanvas');
         const ctx = canvas.getContext('2d');
@@ -1296,9 +1240,6 @@
                 canvas.style.display = 'block';
                 initRain();
                 matrixInterval = setInterval(drawMatrix, 30);
-                
-                // SESİ BAŞLAT 🔊
-                startCyberSounds();
 
                 btn.innerHTML = '🔴 MATRIX: ON';
                 btn.style.background = 'rgba(239, 68, 68, 0.1)';
@@ -1308,9 +1249,6 @@
             } else {
                 clearInterval(matrixInterval);
                 canvas.style.display = 'none';
-                
-                // SESİ DURDUR 🔇
-                stopCyberSounds();
 
                 btn.innerHTML = '🟢 MATRIX: OFF';
                 btn.style.background = 'rgba(0, 240, 255, 0.1)';
