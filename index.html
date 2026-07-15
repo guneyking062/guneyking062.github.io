@@ -20,7 +20,7 @@
             position: relative;
         }
         
-        /* Dinamik Arka Plan: Saat Grid Efekti */
+        /* Dinamik Arka Plan: Saat Grid Efekti (Matrix kapalıyken görünecek) */
         body::before {
             content: '';
             position: fixed;
@@ -32,6 +32,18 @@
             z-index: -1;
         }
 
+        /* MATRIX CANVAS ARKA PLANI */
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            display: none; /* Varsayılan olarak kapalı, butonla açılacak */
+            opacity: 0.7; /* Kartların okunmasını zorlaştırmasın diye hafif şeffaf */
+        }
+
         /* 2. NAVBAR */
         .navbar {
             background-color: rgba(13, 17, 23, 0.95);
@@ -39,7 +51,7 @@
             border-bottom: 1px solid #30363d;
             padding: 20px 8%;
             display: flex;
-            justify-content: center; /* Başlığı ortalayarak şık bir görünüm veriyoruz */
+            justify-content: space-between; /* Buton ve logoyu iki uca yaymak için */
             align-items: center;
             position: sticky;
             top: 0;
@@ -50,6 +62,38 @@
             font-weight: 700;
             letter-spacing: 2px;
             color: #3b82f6;
+            margin: 0 auto 0 calc(50% - 13px - 100px); /* Logoyu ortalamak için ince ayar */
+        }
+        
+        /* Ekran küçükken logoyu ortalama ayarı */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 10px;
+                padding: 15px;
+            }
+            .navbar .logo {
+                margin: 0;
+            }
+        }
+
+        /* Matrix Aç/Kapa Butonu */
+        .matrix-toggle-btn {
+            background: rgba(0, 240, 255, 0.1);
+            color: #00f0ff;
+            border: 1px solid #00f0ff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+        }
+        .matrix-toggle-btn:hover {
+            background: #00f0ff;
+            color: #0d1117;
+            box-shadow: 0 0 20px #00f0ff;
         }
 
         /* 3. KARTLAR ALANI */
@@ -63,7 +107,8 @@
         }
 
         .card {
-            background: #161b22;
+            background: rgba(22, 27, 34, 0.9); /* Matrix arkada akarken kartlar okunsun diye hafif şeffaflık */
+            backdrop-filter: blur(5px);
             border-radius: 20px;
             border: 1px solid #30363d;
             overflow: hidden;
@@ -145,7 +190,7 @@
             95%, 100% { transform: rotate(180deg); }
         }
 
-        /* Beyin Emojisi İçin Özel Efekt */
+        /* Emojiler İçin Özel Efektler */
         .glowing-brain {
             font-size: 65px;
             filter: drop-shadow(0 0 15px rgba(236, 72, 153, 0.6));
@@ -156,14 +201,12 @@
             50% { transform: scale(1.1); }
         }
 
-        /* Sudoku Emojisi Özel Efekti */
         .glowing-sudoku {
             font-size: 65px;
             filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.6));
             animation: pulse 2.5s infinite ease-in-out;
         }
 
-        /* Mayın Emojisi Özel Efekti */
         .glowing-mines {
             font-size: 65px;
             filter: drop-shadow(0 0 15px rgba(239, 68, 68, 0.6));
@@ -426,8 +469,11 @@
 </head>
 <body>
 
+    <canvas id="matrixCanvas"></canvas>
+
     <div class="navbar">
         <div class="logo">GÜNEYKING</div>
+        <button class="matrix-toggle-btn" onclick="toggleMatrix()">🟢 MATRIX: OFF</button>
     </div>
 
     <div class="container">
@@ -983,7 +1029,7 @@
         let minePositions = [];
         let revealedCellsCount = 0;
         let isMinesGameOver = false;
-        let flagMode = false; // true ise tıklanan yere bayrak koyar/kaldırır
+        let flagMode = false;
 
         function toggleMineMode() {
             flagMode = !flagMode;
@@ -1008,14 +1054,12 @@
             isMinesGameOver = false;
             minePositions = [];
             
-            // Bayrak modunu sıfırla
             flagMode = false;
             const btn = document.getElementById('mineModeBtn');
             btn.innerHTML = '🚀 KAZMA MODU';
             btn.style.borderColor = '#3b82f6';
             btn.style.color = '#3b82f6';
 
-            // Mayınları Yerleştir
             while (minePositions.length < totalMines) {
                 let pos = Math.floor(Math.random() * (boardSize * boardSize));
                 if (!minePositions.includes(pos)) {
@@ -1023,7 +1067,6 @@
                 }
             }
 
-            // Arayüzü Oluştur
             for (let i = 0; i < boardSize * boardSize; i++) {
                 const cell = document.createElement('div');
                 cell.classList.add('mines-cell');
@@ -1060,7 +1103,6 @@
 
             const idx = parseInt(cell.dataset.index);
 
-            // Bayrak koyma modu aktifse
             if (flagMode) {
                 if (cell.classList.contains('flagged')) {
                     cell.classList.remove('flagged');
@@ -1072,10 +1114,8 @@
                 return;
             }
 
-            // Kazma modu aktifse ve hücrede bayrak varsa kazmayı engelle
             if (cell.classList.contains('flagged')) return;
 
-            // Mayına basma kontrolü
             if (minePositions.includes(idx)) {
                 revealAllMines();
                 document.getElementById('minesResult').innerText = '💥 SİSTEM ÇÖKTÜ! Mayına bastın.';
@@ -1086,7 +1126,6 @@
 
             revealCell(idx);
 
-            // Kazanma kontrolü
             if (revealedCellsCount === (boardSize * boardSize) - totalMines) {
                 document.getElementById('minesResult').innerText = '🏆 SİSTEM TEMİZLENDİ! Harika iş!';
                 document.getElementById('minesResult').style.color = '#10b981';
@@ -1108,7 +1147,6 @@
                 cell.style.color = getNumberColor(neighborCount);
             } else {
                 cell.innerText = '';
-                // 0 mayın etrafındaysa komşuları otomatik aç (zincirleme reaksiyon)
                 const row = Math.floor(idx / boardSize);
                 const col = idx % boardSize;
 
@@ -1141,6 +1179,80 @@
                 case 3: return '#ef4444';
                 case 4: return '#8b5cf6';
                 default: return '#f59e0b';
+            }
+        }
+
+        // MATRIX EFEKTİ SİSTEMİ
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let matrixActive = false;
+        let matrixInterval = null;
+
+        // Ekran boyutu değiştiğinde canvası ayarla
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const katakana = 'ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const alphabet = katakana.split('');
+
+        const fontSize = 16;
+        let columns = canvas.width / fontSize;
+        let rainDrops = [];
+
+        function initRain() {
+            columns = canvas.width / fontSize;
+            rainDrops = [];
+            for (let x = 0; x < columns; x++) {
+                rainDrops[x] = 1;
+            }
+        }
+
+        function drawMatrix() {
+            // Siyah arka planı hafif şeffaf çizerek iz (trail) efekti yaratıyoruz
+            ctx.fillStyle = 'rgba(13, 17, 23, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#0f0'; // Klasik Matrix Yeşili
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < rainDrops.length; i++) {
+                const text = alphabet[Math.floor(Math.random() * alphabet.length)];
+                ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+
+                if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    rainDrops[i] = 0;
+                }
+                rainDrops[i]++;
+            }
+        }
+
+        function toggleMatrix() {
+            const btn = document.querySelector('.matrix-toggle-btn');
+            matrixActive = !matrixActive;
+
+            if (matrixActive) {
+                canvas.style.display = 'block';
+                initRain();
+                // 30 milisaniyede bir çizim yapacak
+                matrixInterval = setInterval(drawMatrix, 30);
+                btn.innerHTML = '🔴 MATRIX: ON';
+                btn.style.background = 'rgba(239, 68, 68, 0.1)';
+                btn.style.color = '#ef4444';
+                btn.style.borderColor = '#ef4444';
+                btn.style.boxShadow = '0 0 20px rgba(239, 68, 68, 0.4)';
+            } else {
+                clearInterval(matrixInterval);
+                canvas.style.display = 'none';
+                btn.innerHTML = '🟢 MATRIX: OFF';
+                btn.style.background = 'rgba(0, 240, 255, 0.1)';
+                btn.style.color = '#00f0ff';
+                btn.style.borderColor = '#00f0ff';
+                btn.style.boxShadow = '0 0 10px rgba(0, 240, 255, 0.2)';
             }
         }
     </script>
