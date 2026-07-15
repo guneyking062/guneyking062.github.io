@@ -28,7 +28,7 @@
             min-height: 100vh;
         }
 
-        /* MATRIX ARKA PLAN EFEKTİ SİMÜLASYONU */
+        /* MATRIX ARKA PLAN EFEKTİ */
         #matrix-bg {
             position: fixed;
             top: 0;
@@ -92,7 +92,7 @@
             color: #00ff00;
         }
 
-        /* GRID YAPISI */
+        /* GRID YAPISI (Tüm Kartları Düzgünce Hizalar) */
         .grid-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -102,6 +102,7 @@
             padding: 20px;
             box-sizing: border-box;
             z-index: 1;
+            margin-bottom: 100px; /* Terminalin altında kalmasın diye alt boşluk */
         }
 
         .card {
@@ -159,7 +160,7 @@
             box-shadow: var(--neon-glow);
         }
 
-        /* GÜNCELLENMİŞ MODAL TASARIMI */
+        /* MODAL TASARIMI */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -185,7 +186,6 @@
             box-sizing: border-box;
         }
 
-        /* Buton Kaymasını Önleyen Yeni Modal Başlık Satırı */
         .modal-header {
             display: flex;
             justify-content: space-between;
@@ -237,7 +237,6 @@
             color: #ff0000;
         }
 
-        /* Modernize Tarih Girişi CSS */
         .custom-date-input {
             width: 100%;
             padding: 12px;
@@ -255,7 +254,7 @@
             border-color: var(--primary-blue);
         }
 
-        /* SİBER TERMİNAL SİSTEMİ */
+        /* SİBER TERMİNAL */
         .terminal-container {
             position: fixed;
             bottom: 20px;
@@ -349,6 +348,20 @@
             <p>Kartların arkasındaki gizli siber sembolleri en az hamlede eşleştirmeyi dene!</p>
             <button class="card-btn" onclick="openModal('matchModal')">OYUNU BAŞLAT</button>
         </div>
+
+        <div class="card">
+            <div class="icon">🧩</div>
+            <h3>Kozmik Sudoku</h3>
+            <p>Evrenin sayısal düzenini çöz! Zihnini dinlendirecek harika bir siber sudoku.</p>
+            <button class="card-btn" onclick="openModal('sudokuModal')">OYUNU BAŞLAT</button>
+        </div>
+
+        <div class="card">
+            <div class="icon">💣</div>
+            <h3>Siber Mayın Tarlası</h3>
+            <p>6 gizli mayını tetiklemeden tüm güvenli siber alanları temizle ve zamana karşı yarış!</p>
+            <button class="card-btn" onclick="openModal('minesModal')">OYUNU BAŞLAT</button>
+        </div>
     </main>
 
     <div class="modal-overlay" id="guessModal">
@@ -385,6 +398,54 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="matchModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">🧠 Kozmik Eşleştirme</div>
+                <div class="modal-actions">
+                    <button class="how-to-play-btn" onclick="alert('Kartlara tıklayarak arkasındaki emojileri eşleştirin. En az hamlede bitiren kazanır!')">Nasıl Oynanır?</button>
+                    <button class="close-btn" onclick="closeModal('matchModal')">&times;</button>
+                </div>
+            </div>
+            <div style="text-align:center;">
+                <p>Oyun alanı yükleniyor...</p>
+                <button class="card-btn" style="margin-top:15px;">YENİDEN BAŞLA</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="sudokuModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">🧩 Kozmik Sudoku</div>
+                <div class="modal-actions">
+                    <button class="how-to-play-btn" onclick="alert('Griddeki boş hücreleri 1-9 arasındaki sayılarla doldurun. Her satır, sütun ve 3x3 kutuda sayılar eşsiz olmalıdır!')">Nasıl Oynanır?</button>
+                    <button class="close-btn" onclick="closeModal('sudokuModal')">&times;</button>
+                </div>
+            </div>
+            <div style="text-align:center;">
+                <p>Sudoku paneli hazır.</p>
+                <button class="card-btn" style="margin-top:15px;">YENİ BULMACA ÜRET</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="minesModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">💣 Mayın Tarlası</div>
+                <div class="modal-actions">
+                    <button class="how-to-play-btn" onclick="alert('Mayınlara basmadan tüm boş kareleri açın. Rakamlar, o kareye komşu olan mayın sayısını gösterir!')">Nasıl Oynanır?</button>
+                    <button class="close-btn" onclick="closeModal('minesModal')">&times;</button>
+                </div>
+            </div>
+            <div style="text-align:center;">
+                <p>Mayın tarlası simülasyonu hazır.</p>
+                <button class="card-btn" style="margin-top:15px;">YENİDEN BAŞLAT</button>
+            </div>
+        </div>
+    </div>
+
     <div class="terminal-container">
         <div class="terminal-header">
             <span>💻 SİBER TERMİNAL</span>
@@ -409,7 +470,7 @@
             document.getElementById(id).style.display = 'none';
         }
 
-        // Matrix Toggle Tuşu
+        // Matrix Toggle
         const matrixBtn = document.getElementById('matrixToggle');
         const matrixBg = document.getElementById('matrix-bg');
         matrixBtn.addEventListener('click', () => {
@@ -428,7 +489,7 @@
             }
         });
 
-        // Siber Terminal Mantığı (Çalışan Komutlar!)
+        // Gelişmiş Siber Terminal
         const tInput = document.getElementById('terminalInput');
         const tOutput = document.getElementById('terminalOutput');
 
@@ -439,9 +500,9 @@
                 
                 if (command === 'help') {
                     tOutput.innerHTML += `Kullanılabilir komutlar:<br>
-                    - <span style="color:#00d2ff;">play [oyun_adi]</span>: Seçtiğiniz oyunu açar (Örn: play tahmin)<br>
-                    - <span style="color:#00d2ff;">matrix off/on</span>: Matrix arka planını değiştirir<br>
-                    - <span style="color:#00d2ff;">clear</span>: Terminali temizler<br><br>`;
+                    - <span style="color:#00d2ff;">play [tahmin/zaman/match/sudoku/mines]</span> -> İlgili modülü açar.<br>
+                    - <span style="color:#00d2ff;">matrix off/on</span> -> Matrix efektini açıp kapar.<br>
+                    - <span style="color:#00d2ff;">clear</span> -> Terminali temizler.<br><br>`;
                 } else if (command === 'clear') {
                     tOutput.innerHTML = '';
                 } else if (command === 'play tahmin') {
@@ -450,12 +511,21 @@
                 } else if (command === 'play zaman') {
                     openModal('timeModal');
                     tOutput.innerHTML += 'Zaman Yolculuğu modülü tetiklendi.<br><br>';
+                } else if (command === 'play match') {
+                    openModal('matchModal');
+                    tOutput.innerHTML += 'Kozmik Eşleştirme modülü tetiklendi.<br><br>';
+                } else if (command === 'play sudoku') {
+                    openModal('sudokuModal');
+                    tOutput.innerHTML += 'Kozmik Sudoku modülü tetiklendi.<br><br>';
+                } else if (command === 'play mines') {
+                    openModal('minesModal');
+                    tOutput.innerHTML += 'Mayın Tarlası modülü tetiklendi.<br><br>';
                 } else if (command === 'matrix off') {
                     if(matrixBtn.classList.contains('active')) matrixBtn.click();
-                    tOutput.innerHTML += 'Matrix arka planı devredışı bırakıldı.<br><br>';
+                    tOutput.innerHTML += 'Matrix devredışı bırakıldı.<br><br>';
                 } else if (command === 'matrix on') {
                     if(!matrixBtn.classList.contains('active')) matrixBtn.click();
-                    tOutput.innerHTML += 'Matrix arka planı aktif edildi.<br><br>';
+                    tOutput.innerHTML += 'Matrix aktif edildi.<br><br>';
                 } else {
                     tOutput.innerHTML += `'${command}' komutu anlaşılamadı. Yardım için 'help' yazın.<br><br>`;
                 }
