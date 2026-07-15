@@ -1392,7 +1392,7 @@
                 { x: 120, y: 150 }
             ];
             
-            snakeDx = boxSize;
+            snakeDx = 0;
             snakeDy = 0;
             
             generateSnakeFood();
@@ -1412,7 +1412,7 @@
         }
 
         function drawSnakeGame() {
-            if (hasSnakeGameEnded()) {
+            if ((snakeDx !== 0 || snakeDy !== 0) && hasSnakeGameEnded()) {
                 clearInterval(snakeGameInterval);
                 alert("Siber Bağlantı Koptu! Oyun Bitti. Skorun: " + snakeScore);
                 if (snakeScore > snakeBestScore) {
@@ -1440,15 +1440,17 @@
             });
             snakeCtx.shadowBlur = 0;
 
-            const head = { x: snake[0].x + snakeDx, y: snake[0].y + snakeDy };
-            snake.unshift(head);
+            if (snakeDx !== 0 || snakeDy !== 0) {
+                const head = { x: snake[0].x + snakeDx, y: snake[0].y + snakeDy };
+                snake.unshift(head);
 
-            if (snake[0].x === snakeFood.x && snake[0].y === snakeFood.y) {
-                snakeScore += 10;
-                document.getElementById("snakeScore").innerText = snakeScore;
-                generateSnakeFood();
-            } else {
-                snake.pop();
+                if (snake[0].x === snakeFood.x && snake[0].y === snakeFood.y) {
+                    snakeScore += 10;
+                    document.getElementById("snakeScore").innerText = snakeScore;
+                    generateSnakeFood();
+                } else {
+                    snake.pop();
+                }
             }
         }
 
