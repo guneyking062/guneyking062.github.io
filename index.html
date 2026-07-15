@@ -32,7 +32,7 @@
             z-index: -1;
         }
 
-        /* 2. NAVBAR (Menü Linkleri Kaldırıldı) */
+        /* 2. NAVBAR */
         .navbar {
             background-color: rgba(13, 17, 23, 0.95);
             backdrop-filter: blur(10px);
@@ -112,7 +112,7 @@
             display: inline-block;
         }
 
-        /* FÜTÜRİSTİK KESKİN KUM SAATİ (ESKİSİ GİBİ!) */
+        /* FÜTÜRİSTİK KESKİN KUM SAATİ */
         .cyber-hourglass {
             position: relative;
             width: 50px;
@@ -161,6 +161,13 @@
             font-size: 65px;
             filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.6));
             animation: pulse 2.5s infinite ease-in-out;
+        }
+
+        /* Mayın Emojisi Özel Efekti */
+        .glowing-mines {
+            font-size: 65px;
+            filter: drop-shadow(0 0 15px rgba(239, 68, 68, 0.6));
+            animation: pulse 2.2s infinite ease-in-out;
         }
 
         .card-content { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
@@ -243,6 +250,7 @@
         .game-status-bar {
             display: flex;
             justify-content: space-around;
+            align-items: center;
             margin: 15px 0;
             font-size: 14px;
             color: #8b949e;
@@ -344,22 +352,14 @@
             outline: none;
             background: #1f2937;
         }
-        /* Kalın Sudoku Bölme Çizgileri */
         .sudoku-cell:nth-child(3n) { border-right: 2px solid #3b82f6; }
         .sudoku-cell:nth-child(9n) { border-right: none; }
         .sudoku-grid > div:nth-child(n+19):nth-child(-n+27),
         .sudoku-grid > div:nth-child(n+46):nth-child(-n+54) {
             border-bottom: 2px solid #3b82f6;
         }
-        /* Kullanıcının girdiği sayılar */
-        .sudoku-cell.user-filled {
-            color: #00f0ff;
-        }
-        /* Seçili Hücre */
-        .sudoku-cell.selected {
-            background: rgba(59, 130, 246, 0.3) !important;
-        }
-        /* Sayı Giriş Paneli */
+        .sudoku-cell.user-filled { color: #00f0ff; }
+        .sudoku-cell.selected { background: rgba(59, 130, 246, 0.3) !important; }
         .sudoku-numbers {
             display: flex;
             justify-content: center;
@@ -380,9 +380,47 @@
             cursor: pointer;
             transition: 0.2s;
         }
-        .sudoku-num-btn:hover {
-            background: #3b82f6;
+        .sudoku-num-btn:hover { background: #3b82f6; border-color: #3b82f6; }
+
+        /* SİBER MAYIN TARLASI TASARIMI */
+        .mines-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px;
+            margin: 20px auto;
+            max-width: 320px;
+        }
+        .mines-cell {
+            aspect-ratio: 1;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            user-select: none;
+            color: #f5f5f5;
+            transition: background 0.2s;
+        }
+        .mines-cell:hover:not(.revealed) {
+            background: #1f242c;
             border-color: #3b82f6;
+        }
+        .mines-cell.revealed {
+            background: #21262d;
+            border-color: #8b949e;
+            cursor: default;
+        }
+        .mines-cell.mine {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+        .mines-cell.flagged {
+            color: #f59e0b;
         }
     </style>
 </head>
@@ -445,6 +483,19 @@
                     <div class="card-desc">Evrenin sayısal düzenini çöz! Zihnini dinlendirecek harika bir uzay Sudoku deneyimi.</div>
                 </div>
                 <button class="card-btn" onclick="openModal('sudokuModal')">OYUNU BAŞLAT</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-img">
+                <div class="glowing-mines">💣</div>
+            </div>
+            <div class="card-content">
+                <div>
+                    <div class="card-title">Siber Mayın Tarlası</div>
+                    <div class="card-desc">Sanal mayınlardan kaçarak tüm temiz bölgeleri tara! Tek bir yanlış hamle sistemi çökertebilir.</div>
+                </div>
+                <button class="card-btn" onclick="openModal('minesModal')">OYUNU BAŞLAT</button>
             </div>
         </div>
     </div>
@@ -575,6 +626,24 @@
         </div>
     </div>
 
+    <div id="minesModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('minesModal')">&times;</span>
+            <h2 style="color: #ef4444; margin-bottom: 5px;">💣 Siber Mayın Tarlası</h2>
+            <p style="font-size: 13px; color: #8b949e; margin-bottom: 10px;">6 gizli mayını tetiklemeden tüm güvenli hücreleri aç!</p>
+            
+            <div class="game-status-bar">
+                <span>Mayın Sayısı: <span style="color: #ef4444; font-weight: bold;">6</span></span>
+                <span>Mod: <button id="mineModeBtn" class="card-btn" style="width: auto; display: inline-block; padding: 4px 10px; font-size: 12px; margin-left: 10px;" onclick="toggleMineMode()">🚀 KAZMA MODU</button></span>
+            </div>
+
+            <div class="mines-grid" id="minesGrid"></div>
+
+            <button class="action-btn" style="margin-top: 15px; background: #ef4444;" onclick="initMinesGame()">YENİDEN BAŞLA</button>
+            <p id="minesResult" style="margin-top: 15px; font-weight: bold; color: #ef4444; min-height: 20px;"></p>
+        </div>
+    </div>
+
     <script>
         // MODAL KONTROLLERİ
         function openModal(id) {
@@ -585,6 +654,8 @@
                 initMemoryGame();
             } else if (id === 'sudokuModal') {
                 initSudokuGame();
+            } else if (id === 'minesModal') {
+                initMinesGame();
             }
         }
         function closeModal(id) {
@@ -864,7 +935,6 @@
             cell.classList.add('selected');
         }
 
-        // Sayı doldurma fonksiyonu düzeltildi
         function fillSelectedCell(num) {
             if (!selectedCell) {
                 document.getElementById('sudokuResult').innerText = '⚠️ Lütfen önce boş bir hücreye tıkla!';
@@ -904,6 +974,173 @@
             } else {
                 res.innerText = '❌ Hatalı yerleşim var, tekrar kontrol et!';
                 res.style.color = '#ef4444';
+            }
+        }
+
+        // SİBER MAYIN TARLASI SİSTEMİ
+        const boardSize = 6;
+        const totalMines = 6;
+        let minePositions = [];
+        let revealedCellsCount = 0;
+        let isMinesGameOver = false;
+        let flagMode = false; // true ise tıklanan yere bayrak koyar/kaldırır
+
+        function toggleMineMode() {
+            flagMode = !flagMode;
+            const btn = document.getElementById('mineModeBtn');
+            if (flagMode) {
+                btn.innerHTML = '🚩 BAYRAK MODU';
+                btn.style.borderColor = '#f59e0b';
+                btn.style.color = '#f59e0b';
+            } else {
+                btn.innerHTML = '🚀 KAZMA MODU';
+                btn.style.borderColor = '#3b82f6';
+                btn.style.color = '#3b82f6';
+            }
+        }
+
+        function initMinesGame() {
+            const grid = document.getElementById('minesGrid');
+            const resultMsg = document.getElementById('minesResult');
+            grid.innerHTML = '';
+            resultMsg.innerText = '';
+            revealedCellsCount = 0;
+            isMinesGameOver = false;
+            minePositions = [];
+            
+            // Bayrak modunu sıfırla
+            flagMode = false;
+            const btn = document.getElementById('mineModeBtn');
+            btn.innerHTML = '🚀 KAZMA MODU';
+            btn.style.borderColor = '#3b82f6';
+            btn.style.color = '#3b82f6';
+
+            // Mayınları Yerleştir
+            while (minePositions.length < totalMines) {
+                let pos = Math.floor(Math.random() * (boardSize * boardSize));
+                if (!minePositions.includes(pos)) {
+                    minePositions.push(pos);
+                }
+            }
+
+            // Arayüzü Oluştur
+            for (let i = 0; i < boardSize * boardSize; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('mines-cell');
+                cell.dataset.index = i;
+                cell.innerText = '';
+                
+                cell.addEventListener('click', () => handleMineCellClick(cell));
+                grid.appendChild(cell);
+            }
+        }
+
+        function countNeighborMines(index) {
+            let count = 0;
+            const row = Math.floor(index / boardSize);
+            const col = index % boardSize;
+
+            for (let rOffset = -1; rOffset <= 1; rOffset++) {
+                for (let cOffset = -1; cOffset <= 1; cOffset++) {
+                    let targetRow = row + rOffset;
+                    let targetCol = col + cOffset;
+                    if (targetRow >= 0 && targetRow < boardSize && targetCol >= 0 && targetCol < boardSize) {
+                        let targetIdx = targetRow * boardSize + targetCol;
+                        if (minePositions.includes(targetIdx)) {
+                            count++;
+                        }
+                    }
+                }
+            }
+            return count;
+        }
+
+        function handleMineCellClick(cell) {
+            if (isMinesGameOver || cell.classList.contains('revealed')) return;
+
+            const idx = parseInt(cell.dataset.index);
+
+            // Bayrak koyma modu aktifse
+            if (flagMode) {
+                if (cell.classList.contains('flagged')) {
+                    cell.classList.remove('flagged');
+                    cell.innerText = '';
+                } else {
+                    cell.classList.add('flagged');
+                    cell.innerText = '🚩';
+                }
+                return;
+            }
+
+            // Kazma modu aktifse ve hücrede bayrak varsa kazmayı engelle
+            if (cell.classList.contains('flagged')) return;
+
+            // Mayına basma kontrolü
+            if (minePositions.includes(idx)) {
+                revealAllMines();
+                document.getElementById('minesResult').innerText = '💥 SİSTEM ÇÖKTÜ! Mayına bastın.';
+                document.getElementById('minesResult').style.color = '#ef4444';
+                isMinesGameOver = true;
+                return;
+            }
+
+            revealCell(idx);
+
+            // Kazanma kontrolü
+            if (revealedCellsCount === (boardSize * boardSize) - totalMines) {
+                document.getElementById('minesResult').innerText = '🏆 SİSTEM TEMİZLENDİ! Harika iş!';
+                document.getElementById('minesResult').style.color = '#10b981';
+                isMinesGameOver = true;
+            }
+        }
+
+        function revealCell(idx) {
+            const grid = document.getElementById('minesGrid');
+            const cell = grid.children[idx];
+            if (cell.classList.contains('revealed')) return;
+
+            cell.classList.add('revealed');
+            revealedCellsCount++;
+
+            let neighborCount = countNeighborMines(idx);
+            if (neighborCount > 0) {
+                cell.innerText = neighborCount;
+                cell.style.color = getNumberColor(neighborCount);
+            } else {
+                cell.innerText = '';
+                // 0 mayın etrafındaysa komşuları otomatik aç (zincirleme reaksiyon)
+                const row = Math.floor(idx / boardSize);
+                const col = idx % boardSize;
+
+                for (let rOffset = -1; rOffset <= 1; rOffset++) {
+                    for (let cOffset = -1; cOffset <= 1; cOffset++) {
+                        let targetRow = row + rOffset;
+                        let targetCol = col + cOffset;
+                        if (targetRow >= 0 && targetRow < boardSize && targetCol >= 0 && targetCol < boardSize) {
+                            let targetIdx = targetRow * boardSize + targetCol;
+                            revealCell(targetIdx);
+                        }
+                    }
+                }
+            }
+        }
+
+        function revealAllMines() {
+            const grid = document.getElementById('minesGrid');
+            minePositions.forEach(idx => {
+                const cell = grid.children[idx];
+                cell.classList.add('revealed', 'mine');
+                cell.innerText = '💣';
+            });
+        }
+
+        function getNumberColor(num) {
+            switch (num) {
+                case 1: return '#3b82f6';
+                case 2: return '#10b981';
+                case 3: return '#ef4444';
+                case 4: return '#8b5cf6';
+                default: return '#f59e0b';
             }
         }
     </script>
