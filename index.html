@@ -131,7 +131,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 25px;
-            padding-bottom: 100px; /* Terminal için boşluk */
+            padding-bottom: 50px;
         }
         .card {
             background: var(--card-bg);
@@ -142,6 +142,7 @@
             transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: flex;
             flex-direction: column;
+            position: relative;
         }
         .card:hover {
             transform: translateY(-8px);
@@ -157,6 +158,34 @@
             background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
             border-bottom: 1px solid var(--border-color);
             position: relative;
+        }
+
+        /* OYUN BİLGİ (?) BUTONU */
+        .info-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(13, 17, 23, 0.8);
+            border: 1px solid var(--neon-color);
+            color: var(--neon-color);
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
+        }
+        .info-btn:hover {
+            background: var(--neon-color);
+            color: #0d1117;
+            box-shadow: 0 0 15px var(--neon-color);
+            transform: scale(1.1);
         }
 
         /* Grafik Öğeleri */
@@ -444,75 +473,6 @@
         .mines-cell.revealed { background: #21262d; border-color: var(--text-muted); cursor: default; }
         .mines-cell.mine { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #ef4444; }
         .mines-cell.flagged { color: #f59e0b; }
-
-        /* INTERAKTIF SIBER TERMINAL WIDGET */
-        .terminal-widget {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 320px;
-            background: rgba(13, 17, 23, 0.96);
-            border: 1px solid var(--primary-color);
-            border-radius: 12px;
-            z-index: 999;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
-            overflow: hidden;
-            font-family: 'Courier New', Courier, monospace;
-            transition: all 0.3s ease;
-        }
-        .terminal-header {
-            background: #161b22;
-            padding: 10px 15px;
-            font-size: 12px;
-            font-weight: bold;
-            color: var(--neon-color);
-            display: flex;
-            justify-content: space-between;
-            cursor: pointer;
-            border-bottom: 1px solid var(--border-color);
-            user-select: none;
-        }
-        .terminal-body {
-            height: 180px;
-            display: flex;
-            flex-direction: column;
-            padding: 12px;
-            font-size: 11px;
-            color: #00ff00;
-        }
-        .terminal-widget.collapsed {
-            width: 180px;
-        }
-        .terminal-widget.collapsed .terminal-body {
-            display: none;
-        }
-        .terminal-output {
-            flex-grow: 1;
-            overflow-y: auto;
-            margin-bottom: 6px;
-            white-space: pre-wrap;
-            text-align: left;
-        }
-        .terminal-input-line {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .terminal-input-line span {
-            color: var(--neon-color);
-            font-weight: bold;
-        }
-        #terminalInput {
-            flex-grow: 1;
-            background: transparent;
-            border: none;
-            color: #00ff00;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 11px;
-            padding: 0;
-            text-align: left;
-            outline: none;
-        }
     </style>
 </head>
 <body>
@@ -534,6 +494,7 @@
 
     <div class="container">
         <div class="card">
+            <button class="info-btn" onclick="openInfoModal('guessInfo')">?</button>
             <div class="card-img">
                 <div class="neon-62"><span>6</span><span>2</span></div>
             </div>
@@ -547,6 +508,7 @@
         </div>
 
         <div class="card">
+            <button class="info-btn" onclick="openInfoModal('ageInfo')">?</button>
             <div class="card-img">
                 <div class="cyber-hourglass">
                     <div class="hourglass-top"></div>
@@ -563,6 +525,7 @@
         </div>
 
         <div class="card">
+            <button class="info-btn" onclick="openInfoModal('memoryInfo')">?</button>
             <div class="card-img">
                 <div class="glowing-emoji">🧠</div>
             </div>
@@ -576,6 +539,7 @@
         </div>
 
         <div class="card">
+            <button class="info-btn" onclick="openInfoModal('sudokuInfo')">?</button>
             <div class="card-img">
                 <div class="glowing-emoji">🧩</div>
             </div>
@@ -589,6 +553,7 @@
         </div>
 
         <div class="card">
+            <button class="info-btn" onclick="openInfoModal('minesInfo')">?</button>
             <div class="card-img">
                 <div class="glowing-emoji">💣</div>
             </div>
@@ -744,20 +709,78 @@
         </div>
     </div>
 
-    <div class="terminal-widget collapsed" id="terminalWidget">
-        <div class="terminal-header" onclick="toggleTerminal()">
-            <span>🖥️ SİBER TERMİNAL</span>
-            <span id="terminalToggleIcon">▲</span>
+    <div id="guessInfo" class="modal">
+        <div class="modal-content" style="border-color: var(--neon-color);">
+            <span class="close-btn" onclick="closeModal('guessInfo')">&times;</span>
+            <h2 style="color: var(--neon-color); margin-bottom: 15px;">🔢 Sayı Tahmin — Nasıl Oynanır?</h2>
+            <p style="text-align: left; line-height: 1.8; color: var(--text-color);">
+                Sistem arkada <strong>1 ile 100 arasında</strong> gizli bir sayı belirler.<br><br>
+                🎯 <strong>Amacın:</strong> Bu gizli sayıyı en fazla <strong>6 tahmin hakkı</strong> içinde bulmaktır.<br>
+                💡 Her tahminde sistem seni yönlendirir: "Daha Büyük bir sayı dene" ya da "Daha Küçük bir sayı dene".<br>
+                🏆 En az hamlede doğru sayıyı bularak en iyi skorunu yapmaya çalış!
+            </p>
+            <button class="action-btn" style="margin-top: 25px;" onclick="closeModal('guessInfo')">ANLADIM</button>
         </div>
-        <div class="terminal-body" id="terminalBody">
-            <div class="terminal-output" id="terminalOutput">
-                <div>GÜNEYKING OS [Sürüm 3.0.26]</div>
-                <div>Sistem aktif. Komutlar için 'help' yaz.</div>
-            </div>
-            <div class="terminal-input-line">
-                <span>GKING@system:~$</span>
-                <input type="text" id="terminalInput" onkeydown="handleTerminalCommand(event)" autocomplete="off">
-            </div>
+    </div>
+
+    <div id="ageInfo" class="modal">
+        <div class="modal-content" style="border-color: var(--neon-color);">
+            <span class="close-btn" onclick="closeModal('ageInfo')">&times;</span>
+            <h2 style="color: var(--neon-color); margin-bottom: 15px;">⏳ Zaman Yolculuğu — Nasıl Çalışır?</h2>
+            <p style="text-align: left; line-height: 1.8; color: var(--text-color);">
+                Bu panel senin kişisel biyometrik ve kozmik zaman akışını hesaplar.<br><br>
+                📅 <strong>Kullanımı:</strong> Doğum tarihini gün, ay ve yıl olarak sisteme gir.<br>
+                📊 <strong>Neler Göreceksin?</strong><br>
+                • Dünyada geçirdiğin toplam saniyenin anlık akışı,<br>
+                • Tahmini kalp atışın ve aldığın toplam nefes miktarı,<br>
+                • Dünya ile birlikte uzayda katettiğin kozmik yolculuk mesafesi,<br>
+                • Klasik ve Çin burcu analizlerin, kuşağın (X, Y, Z vb.) ve doğum gününe kalan gün süresi!
+            </p>
+            <button class="action-btn" style="margin-top: 25px;" onclick="closeModal('ageInfo')">ANLADIM</button>
+        </div>
+    </div>
+
+    <div id="memoryInfo" class="modal">
+        <div class="modal-content" style="border-color: var(--neon-color);">
+            <span class="close-btn" onclick="closeModal('memoryInfo')">&times;</span>
+            <h2 style="color: var(--neon-color); margin-bottom: 15px;">🧠 Kozmik Eşleştirme — Nasıl Oynanır?</h2>
+            <p style="text-align: left; line-height: 1.8; color: var(--text-color);">
+                Karşına arkası dönük 16 adet kart gelecek.<br><br>
+                🃏 <strong>Kurallar:</strong> Sırayla iki kartın üzerine tıklayarak ön yüzünü aç.<br>
+                🧬 Eğer açtığın iki karttaki semboller <strong>aynıysa</strong> kartlar açık kalır. Farklıysa tekrar arkaları döner.<br>
+                📉 <strong>Hedef:</strong> En az hamleyle tüm kart çiftlerini birbiriyle eşleştirmektir!
+            </p>
+            <button class="action-btn" style="margin-top: 25px;" onclick="closeModal('memoryInfo')">ANLADIM</button>
+        </div>
+    </div>
+
+    <div id="sudokuInfo" class="modal">
+        <div class="modal-content" style="border-color: var(--neon-color);">
+            <span class="close-btn" onclick="closeModal('sudokuInfo')">&times;</span>
+            <h2 style="color: var(--neon-color); margin-bottom: 15px;">🧩 Kozmik Sudoku — Nasıl Oynanır?</h2>
+            <p style="text-align: left; line-height: 1.8; color: var(--text-color);">
+                9x9 boyutundaki siber bulmacayı kurallara uygun şekilde tamamlamalısın.<br><br>
+                ✍️ <strong>Nasıl Oynanır?</strong><br>
+                1. Sudoku tablosundaki boş (mavi kenarlıklı olmayan) bir hücreye tıkla.<br>
+                2. Alttaki 1'den 9'a kadar olan sayılardan oraya uygun olanına bas.<br><br>
+                ⚠️ <strong>Kural:</strong> Her satırda, her sütunda ve kalın çizgilerle ayrılmış her 3x3'lük blokta 1-9 arasındaki sayılar <strong>yalnızca bir kez</strong> bulunabilir! Hatalarını silmek için 'SİL' butonunu kullanabilirsin.
+            </p>
+            <button class="action-btn" style="margin-top: 25px;" onclick="closeModal('sudokuInfo')">ANLADIM</button>
+        </div>
+    </div>
+
+    <div id="minesInfo" class="modal">
+        <div class="modal-content" style="border-color: var(--neon-color);">
+            <span class="close-btn" onclick="closeModal('minesInfo')">&times;</span>
+            <h2 style="color: var(--neon-color); margin-bottom: 15px;">💣 Siber Mayın Tarlası — Nasıl Oynanır?</h2>
+            <p style="text-align: left; line-height: 1.8; color: var(--text-color);">
+                6x6 grid üzerine gizlenmiş <strong>6 adet ölümcül siber mayın</strong> bulunuyor.<br><br>
+                ⚒️ <strong>İki Farklı Modun Var (Butonla Değişebilirsin):</strong><br>
+                • <strong>🚀 KAZMA Modu:</strong> Güvenli olduğunu düşündüğün kareleri açar. Kareyi açtığında yazan sayı, o kareye komşu olan mayınların toplam sayısıdır.<br>
+                • <strong>🚩 BAYRAK Modu:</strong> Mayın olduğunu tahmin ettiğin karelere işaret koyarak yanlışlıkla basmanı engeller.<br><br>
+                🏆 Mayınları patlatmadan tüm güvenli alanları en hızlı sürede temizlemeye çalış!
+            </p>
+            <button class="action-btn" style="margin-top: 25px;" onclick="closeModal('minesInfo')">ANLADIM</button>
         </div>
     </div>
 
@@ -824,636 +847,601 @@
                 osc.connect(gain);
                 gain.connect(this.ctx.destination);
                 osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(140, this.ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(30, this.ctx.currentTime + 0.5);
-                gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.5);
+                osc.frequency.setValueAtTime(150, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(30, this.ctx.currentTime + 0.4);
+                gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.45);
                 osc.start();
-                osc.stop(this.ctx.currentTime + 0.5);
+                osc.stop(this.ctx.currentTime + 0.45);
             }
         };
 
-        // Otomatik ses bağlayıcı
-        function bindGlobalSounds() {
-            document.querySelectorAll('button, select, .close-btn, .sudoku-num-btn').forEach(el => {
-                if(!el.dataset.soundBound) {
-                    el.addEventListener('mouseenter', () => Synth.playHover());
-                    el.addEventListener('click', () => Synth.playClick());
-                    el.dataset.soundBound = "true";
-                }
+        // Butonlara ve Kartlara Hover Sesi Bağlama
+        document.addEventListener('DOMContentLoaded', () => {
+            const hoverTargets = document.querySelectorAll('.card, .card-btn, .action-btn, .close-btn, .matrix-toggle-btn, .theme-select, .info-btn');
+            hoverTargets.forEach(el => {
+                el.addEventListener('mouseenter', () => Synth.playHover());
+                el.addEventListener('click', () => Synth.playClick());
             });
-        }
-        window.addEventListener('DOMContentLoaded', () => {
-            bindGlobalSounds();
-            // Herhangi bir DOM güncellemesinde tekrar tara
-            const observer = new MutationObserver(bindGlobalSounds);
-            observer.observe(document.body, { childList: true, subtree: true });
         });
 
-        // MODAL KONTROLLERİ
+        // MODAL YÖNETİMİ
         function openModal(id) {
             document.getElementById(id).style.display = 'flex';
-            if (id === 'guessModal') resetGuessGame();
-            else if (id === 'memoryModal') initMemoryGame();
-            else if (id === 'sudokuModal') initSudokuGame();
-            else if (id === 'minesModal') initMinesGame();
+            if (id === 'memoryModal') initMemoryGame();
+            if (id === 'sudokuModal') initSudokuGame();
+            if (id === 'minesModal') initMinesGame();
         }
         function closeModal(id) {
             document.getElementById(id).style.display = 'none';
-            if(id === 'ageModal') clearInterval(dashboardTimer);
-            if(id === 'minesModal') { clearInterval(minesInterval); minesInterval = null; }
+            if (id === 'ageModal') stopDashboardTimer();
         }
 
-        // TAHMİN OYUNU SİSTEMİ
-        let targetNum, maxAttempts = 6, attemptsLeft = 6, attemptsMade = 0;
-        function resetGuessGame() {
-            targetNum = Math.floor(Math.random() * 100) + 1;
-            attemptsLeft = maxAttempts;
-            attemptsMade = 0;
-            document.getElementById('remainingAttempts').innerText = attemptsLeft;
-            document.getElementById('guessInput').value = '';
-            document.getElementById('guessResult').innerText = '';
-            document.getElementById('guessInputArea').style.display = 'block';
-            document.getElementById('restartGameBtn').style.display = 'none';
-
-            // Skor Yükle
-            const best = localStorage.getItem('guessBest') || '--';
-            document.getElementById('guessBest').innerText = best;
+        // BİLGİLENDİRME MODAL AÇMA FONKSİYONU
+        function openInfoModal(id) {
+            document.getElementById(id).style.display = 'flex';
         }
 
-        function playGuessGame() {
-            const inputField = document.getElementById('guessInput');
-            const val = parseInt(inputField.value);
-            const res = document.getElementById('guessResult');
-            
-            if (isNaN(val) || val < 1 || val > 100) {
-                res.innerText = "⚠️ Lütfen 1-100 arası bir sayı gir!";
-                res.style.color = "#f59e0b";
-                return;
-            }
-
-            attemptsMade++;
-            attemptsLeft--;
-            document.getElementById('remainingAttempts').innerText = attemptsLeft;
-
-            if (val === targetNum) {
-                res.innerHTML = `🎉 Tebrikler! Sayıyı buldun: <strong>${targetNum}</strong>`;
-                res.style.color = "#10b981";
-                document.getElementById('guessInputArea').style.display = 'none';
-                document.getElementById('restartGameBtn').style.display = 'block';
-                Synth.playWin();
-
-                // Skor Kaydet
-                const best = localStorage.getItem('guessBest');
-                if(!best || attemptsMade < parseInt(best)) {
-                    localStorage.setItem('guessBest', attemptsMade);
-                    document.getElementById('guessBest').innerText = attemptsMade + " (Rekor!)";
-                }
-            } else if (attemptsLeft === 0) {
-                res.innerHTML = `😢 Maalesef kaybettin! Sayı: <strong>${targetNum}</strong>`;
-                res.style.color = "#ef4444";
-                document.getElementById('guessInputArea').style.display = 'none';
-                document.getElementById('restartGameBtn').style.display = 'block';
-                Synth.playExplosion();
-            } else {
-                res.innerText = val < targetNum ? "📈 Daha BÜYÜK bir sayı gir!" : "📉 Daha KÜÇÜK bir sayı gir!";
-                res.style.color = "var(--primary-color)";
-            }
-            inputField.value = '';
-        }
-
-        // BURÇ VE JENERASYON HESAPLARI
-        function getZodiacSign(day, month) {
-            const signs = [
-                { name: "Oğlak ♑ (Toprak)", day: 20, month: 1 },
-                { name: "Kova ♒ (Hava)", day: 19, month: 2 },
-                { name: "Balık ♓ (Su)", day: 20, month: 3 },
-                { name: "Koç ♈ (Ateş)", day: 20, month: 4 },
-                { name: "Boğa ♉ (Toprak)", day: 21, month: 5 },
-                { name: "İkizler ♊ (Hava)", day: 21, month: 6 },
-                { name: "Yengeç ♋ (Su)", day: 22, month: 7 },
-                { name: "Aslan ♌ (Ateş)", day: 22, month: 8 },
-                { name: "Başak ♍ (Toprak)", day: 23, month: 9 },
-                { name: "Terazi ♎ (Hava)", day: 23, month: 10 },
-                { name: "Akrep ♏ (Su)", day: 22, month: 11 },
-                { name: "Yay ♐ (Ateş)", day: 21, month: 12 },
-                { name: "Oğlak ♑ (Toprak)", day: 31, month: 12 }
-            ];
-            return day <= signs[month - 1].day ? (signs[month - 2] ? signs[month - 2].name : signs[11].name) : signs[month - 1].name;
-        }
-
-        function getChineseZodiac(year) {
-            const animals = ["Maymun 🐒", "Horoz 🐓", "Köpek 🐕", "Domuz 🐖", "Fare 🐀", "Öküz 🐂", "Kaplan 🐅", "Tavşan 🐇", "Ejderha 🐉", "Yılan 🐍", "At 🐎", "Koyun 🐑"];
-            return animals[year % 12];
-        }
-
-        function getGeneration(year) {
-            if (year >= 2013) return "Alpha Kuşağı 👶";
-            if (year >= 1997) return "Z Kuşağı (Gen Z) ⚡";
-            if (year >= 1981) return "Y Kuşağı (Millennial) 💻";
-            if (year >= 1965) return "X Kuşağı 🛠️";
-            return "Baby Boomer 🏛️";
-        }
-
-        function getDaysToNextBirthday(birthDate) {
-            const today = new Date();
-            const nextBirthday = new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate());
-            if (today > nextBirthday) nextBirthday.setFullYear(today.getFullYear() + 1);
-            return Math.ceil((nextBirthday - today) / (24 * 60 * 60 * 1000));
-        }
-
-        let dashboardTimer;
-        function startDashboard() {
-            const dateVal = document.getElementById('birthDateInput').value;
-            if(!dateVal) return;
-
-            const birthDate = new Date(dateVal);
-            const birthYear = birthDate.getFullYear();
-            const birthMonth = birthDate.getMonth() + 1;
-            const birthDay = birthDate.getDate();
-
-            document.getElementById('ageInputArea').style.display = 'none';
-            document.getElementById('dashboardDisplay').style.display = 'block';
-
-            document.getElementById('valZodiac').innerText = getZodiacSign(birthDay, birthMonth);
-            document.getElementById('valChinese').innerText = getChineseZodiac(birthYear);
-            document.getElementById('valGeneration').innerText = getGeneration(birthYear);
-
-            dashboardTimer = setInterval(() => {
-                const now = new Date();
-                const diffMs = now - birthDate;
-                const totalSec = Math.floor(diffMs / 1000);
-                
-                document.getElementById('liveSec').innerText = totalSec.toLocaleString('tr-TR');
-                document.getElementById('valHeart').innerText = (totalSec * 1.3).toLocaleString('tr-TR', {maximumFractionDigits: 0});
-                document.getElementById('valBreath').innerText = (totalSec * 0.26).toLocaleString('tr-TR', {maximumFractionDigits: 0});
-                document.getElementById('valEarth').innerText = (totalSec * 30).toLocaleString('tr-TR');
-                document.getElementById('valAge').innerText = (now.getFullYear() - birthYear);
-                document.getElementById('valNextBirthday').innerText = getDaysToNextBirthday(birthDate) + " Gün";
-            }, 1000);
-        }
-
-        // KOZMİK EŞLEŞTİRME OYUNU
-        const spaceEmojis = ['🚀', '🚀', '🛸', '🛸', '👾', '👾', '⏳', '⏳', '🪐', '🪐', '🛰️', '🛰️', '🌀', '🌀', '🔋', '🔋'];
-        let selectedCards = [], matchedPairs = 0, totalMoves = 0, isWaiting = false;
-
-        function initMemoryGame() {
-            const grid = document.getElementById('memoryGrid');
-            grid.innerHTML = '';
-            document.getElementById('memoryResult').innerText = '';
-            selectedCards = []; matchedPairs = 0; totalMoves = 0; isWaiting = false;
-            
-            document.getElementById('memoryMoves').innerText = totalMoves;
-            document.getElementById('memoryBest').innerText = localStorage.getItem('memoryBest') || '--';
-
-            const shuffled = [...spaceEmojis].sort(() => Math.random() - 0.5);
-            shuffled.forEach((emoji, index) => {
-                const card = document.createElement('div');
-                card.classList.add('memory-card');
-                card.dataset.emoji = emoji;
-                card.innerText = '❓';
-                card.addEventListener('mouseenter', () => Synth.playHover());
-                card.addEventListener('click', () => {
-                    Synth.playClick();
-                    handleCardClick(card);
-                });
-                grid.appendChild(card);
-            });
-        }
-
-        function handleCardClick(card) {
-            if (isWaiting || card.classList.contains('flipped') || card.classList.contains('matched')) return;
-
-            card.innerText = card.dataset.emoji;
-            card.classList.add('flipped');
-            selectedCards.push(card);
-
-            if (selectedCards.length === 2) {
-                totalMoves++;
-                document.getElementById('memoryMoves').innerText = totalMoves;
-                isWaiting = true;
-
-                const [card1, card2] = selectedCards;
-                if (card1.dataset.emoji === card2.dataset.emoji) {
-                    card1.classList.add('matched');
-                    card2.classList.add('matched');
-                    matchedPairs++;
-                    selectedCards = [];
-                    isWaiting = false;
-
-                    if (matchedPairs === 8) {
-                        document.getElementById('memoryResult').innerText = `🎉 Tüm çiftleri buldun!`;
-                        Synth.playWin();
-
-                        const best = localStorage.getItem('memoryBest');
-                        if(!best || totalMoves < parseInt(best)) {
-                            localStorage.setItem('memoryBest', totalMoves);
-                            document.getElementById('memoryBest').innerText = totalMoves + " (Rekor!)";
-                        }
-                    }
-                } else {
-                    setTimeout(() => {
-                        card1.innerText = '❓';
-                        card2.innerText = '❓';
-                        card1.classList.remove('flipped');
-                        card2.classList.remove('flipped');
-                        selectedCards = [];
-                        isWaiting = false;
-                    }, 800);
-                }
-            }
-        }
-
-        // KOZMİK SUDOKU SİSTEMİ
-        let selectedCell = null, sudokuSolution = [], sudokuPuzzle = [];
-        const baseSolution = [
-            [5,3,4,6,7,8,9,1,2], [6,7,2,1,9,5,3,4,8], [1,9,8,3,4,2,5,6,7],
-            [8,5,9,7,6,1,4,2,3], [4,2,6,8,5,3,7,9,1], [7,1,3,9,2,4,8,5,6],
-            [9,6,1,5,3,7,2,8,4], [2,8,7,4,1,9,6,3,5], [3,4,5,2,8,6,1,7,9]
-        ];
-
-        function initSudokuGame() {
-            const grid = document.getElementById('sudokuGrid');
-            grid.innerHTML = '';
-            document.getElementById('sudokuResult').innerText = '';
-            selectedCell = null;
-
-            sudokuSolution = JSON.parse(JSON.stringify(baseSolution));
-            sudokuPuzzle = JSON.parse(JSON.stringify(baseSolution));
-
-            for (let r = 0; r < 9; r++) {
-                for (let c = 0; c < 9; c++) {
-                    if (Math.random() > 0.45) sudokuPuzzle[r][c] = 0;
-                }
-            }
-
-            for (let r = 0; r < 9; r++) {
-                for (let c = 0; c < 9; c++) {
-                    const cell = document.createElement('div');
-                    cell.classList.add('sudoku-cell');
-                    cell.dataset.row = r; cell.dataset.col = c;
-
-                    const val = sudokuPuzzle[r][c];
-                    if (val !== 0) {
-                        cell.innerText = val;
-                        cell.style.color = 'var(--text-muted)';
-                    } else {
-                        cell.classList.add('user-filled');
-                        cell.addEventListener('mouseenter', () => Synth.playHover());
-                        cell.addEventListener('click', () => {
-                            Synth.playClick();
-                            selectSudokuCell(cell);
-                        });
-                    }
-                    grid.appendChild(cell);
-                }
-            }
-        }
-
-        function selectSudokuCell(cell) {
-            if (selectedCell) selectedCell.classList.remove('selected');
-            selectedCell = cell;
-            cell.classList.add('selected');
-        }
-
-        function fillSelectedCell(num) {
-            if (!selectedCell) return;
-            selectedCell.innerText = num;
-            const r = parseInt(selectedCell.dataset.row);
-            const c = parseInt(selectedCell.dataset.col);
-            sudokuPuzzle[r][c] = num;
-        }
-
-        function clearSelectedCell() {
-            if (selectedCell) {
-                selectedCell.innerText = '';
-                const r = parseInt(selectedCell.dataset.row);
-                const c = parseInt(selectedCell.dataset.col);
-                sudokuPuzzle[r][c] = 0;
-            }
-        }
-
-        function checkSudokuSolution() {
-            let win = true;
-            for (let r = 0; r < 9; r++) {
-                for (let c = 0; c < 9; c++) {
-                    if (sudokuPuzzle[r][c] !== sudokuSolution[r][c]) { win = false; break; }
-                }
-            }
-            const res = document.getElementById('sudokuResult');
-            if (win) {
-                res.innerText = '🎉 TEBRİKLER! Sudoku başarıyla çözüldü!';
-                res.style.color = '#10b981';
-                Synth.playWin();
-            } else {
-                res.innerText = '❌ Hatalı veya eksik yerleşim var!';
-                res.style.color = '#ef4444';
-                Synth.playExplosion();
-            }
-        }
-
-        // SİBER MAYIN TARLASI SİSTEMİ (ZAMANLAYICI VE REKOR KARTI DAHİL)
-        const boardSize = 6, totalMines = 6;
-        let minePositions = [], revealedCellsCount = 0, isMinesGameOver = false, flagMode = false;
-        let minesInterval = null, minesSeconds = 0;
-
-        function toggleMineMode() {
-            flagMode = !flagMode;
-            const btn = document.getElementById('mineModeBtn');
-            if (flagMode) {
-                btn.innerHTML = '🚩 BAYRAK';
-                btn.style.borderColor = '#f59e0b';
-                btn.style.color = '#f59e0b';
-            } else {
-                btn.innerHTML = '🚀 KAZMA';
-                btn.style.borderColor = 'var(--primary-color)';
-                btn.style.color = 'var(--primary-color)';
-            }
-        }
-
-        function initMinesGame() {
-            const grid = document.getElementById('minesGrid');
-            grid.innerHTML = '';
-            document.getElementById('minesResult').innerText = '';
-            revealedCellsCount = 0; isMinesGameOver = false; minePositions = [];
-            
-            clearInterval(minesInterval);
-            minesInterval = null;
-            minesSeconds = 0;
-            document.getElementById('minesTimer').innerText = 0;
-            document.getElementById('minesBest').innerText = localStorage.getItem('minesBest') || '--';
-
-            flagMode = false;
-            const btn = document.getElementById('mineModeBtn');
-            btn.innerHTML = '🚀 KAZMA';
-            btn.style.borderColor = 'var(--primary-color)';
-            btn.style.color = 'var(--primary-color)';
-
-            while (minePositions.length < totalMines) {
-                let pos = Math.floor(Math.random() * (boardSize * boardSize));
-                if (!minePositions.includes(pos)) minePositions.push(pos);
-            }
-
-            for (let i = 0; i < boardSize * boardSize; i++) {
-                const cell = document.createElement('div');
-                cell.classList.add('mines-cell');
-                cell.dataset.index = i;
-                cell.addEventListener('mouseenter', () => Synth.playHover());
-                cell.addEventListener('click', () => {
-                    Synth.playClick();
-                    handleMineCellClick(cell);
-                });
-                grid.appendChild(cell);
-            }
-        }
-
-        function handleMineCellClick(cell) {
-            if (isMinesGameOver || cell.classList.contains('revealed')) return;
-
-            // İlk tıklamada zamanlayıcıyı başlat
-            if (!minesInterval) {
-                minesInterval = setInterval(() => {
-                    minesSeconds++;
-                    document.getElementById('minesTimer').innerText = minesSeconds;
-                }, 1000);
-            }
-
-            const idx = parseInt(cell.dataset.index);
-
-            if (flagMode) {
-                if (cell.classList.contains('flagged')) {
-                    cell.classList.remove('flagged'); cell.innerText = '';
-                } else {
-                    cell.classList.add('flagged'); cell.innerText = '🚩';
-                }
-                return;
-            }
-
-            if (cell.classList.contains('flagged')) return;
-
-            if (minePositions.includes(idx)) {
-                clearInterval(minesInterval); minesInterval = null;
-                revealAllMines();
-                document.getElementById('minesResult').innerText = '💥 Mayına bastın! Sinyal kesildi.';
-                document.getElementById('minesResult').style.color = '#ef4444';
-                isMinesGameOver = true;
-                Synth.playExplosion();
-                return;
-            }
-
-            revealCell(idx);
-
-            if (revealedCellsCount === (boardSize * boardSize) - totalMines) {
-                clearInterval(minesInterval); minesInterval = null;
-                document.getElementById('minesResult').innerText = '🏆 Bölge temizlendi! Muhteşem galibiyet!';
-                document.getElementById('minesResult').style.color = '#10b981';
-                isMinesGameOver = true;
-                Synth.playWin();
-
-                // Rekor güncelle
-                const best = localStorage.getItem('minesBest');
-                if(!best || minesSeconds < parseInt(best)) {
-                    localStorage.setItem('minesBest', minesSeconds);
-                    document.getElementById('minesBest').innerText = minesSeconds + " (Rekor!)";
-                }
-            }
-        }
-
-        function countNeighborMines(index) {
-            let count = 0;
-            const row = Math.floor(index / boardSize);
-            const col = index % boardSize;
-
-            for (let r = -1; r <= 1; r++) {
-                for (let c = -1; c <= 1; c++) {
-                    let tRow = row + r, tCol = col + c;
-                    if (tRow >= 0 && tRow < boardSize && tCol >= 0 && tCol < boardSize) {
-                        if (minePositions.includes(tRow * boardSize + tCol)) count++;
-                    }
-                }
-            }
-            return count;
-        }
-
-        function revealCell(idx) {
-            const grid = document.getElementById('minesGrid');
-            const cell = grid.children[idx];
-            if (cell.classList.contains('revealed')) return;
-
-            cell.classList.add('revealed');
-            revealedCellsCount++;
-
-            let count = countNeighborMines(idx);
-            if (count > 0) {
-                cell.innerText = count;
-                cell.style.color = getNumberColor(count);
-            } else {
-                cell.innerText = '';
-                const row = Math.floor(idx / boardSize);
-                const col = idx % boardSize;
-
-                for (let r = -1; r <= 1; r++) {
-                    for (let c = -1; c <= 1; c++) {
-                        let tRow = row + r, tCol = col + c;
-                        if (tRow >= 0 && tRow < boardSize && tCol >= 0 && tCol < boardSize) {
-                            revealCell(tRow * boardSize + tCol);
-                        }
-                    }
-                }
-            }
-        }
-
-        function revealAllMines() {
-            const grid = document.getElementById('minesGrid');
-            minePositions.forEach(idx => {
-                const cell = grid.children[idx];
-                cell.classList.add('revealed', 'mine');
-                cell.innerText = '💣';
-            });
-        }
-
-        function getNumberColor(num) {
-            switch (num) {
-                case 1: return 'var(--primary-color)';
-                case 2: return '#10b981';
-                case 3: return '#ef4444';
-                default: return '#f59e0b';
-            }
-        }
-
-        // COĞRAFİ VE SİBER TEMA DEĞİŞTİRİCİ
+        // TEMA VE MATRIX EFEKTLERİ
         function changeTheme(theme) {
             document.body.className = '';
             if (theme !== 'original') {
                 document.body.classList.add('theme-' + theme);
             }
-            // Matrix rengini tema rengine eşitle
-            initRain();
         }
 
-        // INTERAKTIF TERMINAL SISTEMI
-        function toggleTerminal() {
-            const widget = document.getElementById('terminalWidget');
-            const icon = document.getElementById('terminalToggleIcon');
-            widget.classList.toggle('collapsed');
-            icon.innerText = widget.classList.contains('collapsed') ? '▲' : '▼';
-        }
-
-        function handleTerminalCommand(e) {
-            if (e.key === 'Enter') {
-                const input = document.getElementById('terminalInput');
-                const cmdText = input.value.trim().toLowerCase();
-                input.value = '';
-
-                const output = document.getElementById('terminalOutput');
-                output.innerHTML += `<div>GKING@system:~$ ${cmdText}</div>`;
-
-                const parts = cmdText.split(' ');
-                const mainCmd = parts[0];
-
-                if (mainCmd === 'help') {
-                    output.innerHTML += `<div>Komutlar:\n - help: Komutları listeler\n - matrix on/off: Matrix akışını yönetir\n - theme [original/cyberpunk/toxic/solana]: Tema ayarlar\n - hack: Sızma simülasyonu başlatır\n - clear: Ekranı temizler</div>`;
-                } else if (mainCmd === 'clear') {
-                    output.innerHTML = '';
-                } else if (mainCmd === 'matrix') {
-                    const sub = parts[1];
-                    if (sub === 'on') {
-                        if (!matrixActive) toggleMatrix();
-                        output.innerHTML += `<div>Matrix aktif edildi.</div>`;
-                    } else if (sub === 'off') {
-                        if (matrixActive) toggleMatrix();
-                        output.innerHTML += `<div>Matrix devredışı bırakıldı.</div>`;
-                    } else {
-                        output.innerHTML += `<div>Hata! Kullanım: matrix on veya matrix off</div>`;
-                    }
-                } else if (mainCmd === 'theme') {
-                    const sub = parts[1];
-                    if (['original', 'cyberpunk', 'toxic', 'solana'].includes(sub)) {
-                        changeTheme(sub);
-                        document.getElementById('themeSelector').value = sub;
-                        output.innerHTML += `<div>Tema '${sub}' olarak ayarlandı.</div>`;
-                    } else {
-                        output.innerHTML += `<div>Kullanım: theme [original/cyberpunk/toxic/solana]</div>`;
-                    }
-                } else if (mainCmd === 'hack') {
-                    output.innerHTML += `<div><span style="color:red">Siber tarama başlatılıyor...</span></div>`;
-                    let count = 0;
-                    const hackInterval = setInterval(() => {
-                        output.innerHTML += `<div>Bypass port ${Math.floor(Math.random()*1000)}... BAŞARILI</div>`;
-                        output.scrollTop = output.scrollHeight;
-                        count++;
-                        if (count > 4) {
-                            clearInterval(hackInterval);
-                            output.innerHTML += `<div><span style="color:#10b981">ERİŞİM YETKİLENDİRİLDİ! TAM YETKİ SAĞLANDI.</span></div>`;
-                            Synth.playWin();
-                        }
-                    }, 400);
-                } else {
-                    output.innerHTML += `<div>Hata: '${mainCmd}' bilinmeyen bir komut.</div>`;
-                }
-                output.scrollTop = output.scrollHeight;
-            }
-        }
-
-        // MATRIX YAĞMURU SISTEMI
+        let matrixInterval = null;
         const canvas = document.getElementById('matrixCanvas');
         const ctx = canvas.getContext('2d');
-        let matrixActive = false, matrixInterval = null;
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        const katakana = 'ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄ1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        const alphabet = katakana.split('');
-        const fontSize = 16;
-        let columns = canvas.width / fontSize;
-        let rainDrops = [];
-
-        function initRain() {
-            columns = canvas.width / fontSize;
-            rainDrops = [];
-            for (let x = 0; x < columns; x++) rainDrops[x] = 1;
-        }
-
-        function drawMatrix() {
-            ctx.fillStyle = 'rgba(13, 17, 23, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Aktif temaya göre renk seç
-            const themeColor = getComputedStyle(document.body).getPropertyValue('--neon-color').trim() || '#00ff00';
-            ctx.fillStyle = themeColor;
-            ctx.font = fontSize + 'px monospace';
-
-            for (let i = 0; i < rainDrops.length; i++) {
-                const text = alphabet[Math.floor(Math.random() * alphabet.length)];
-                ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
-
-                if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    rainDrops[i] = 0;
-                }
-                rainDrops[i]++;
-            }
-        }
 
         function toggleMatrix() {
             const btn = document.querySelector('.matrix-toggle-btn');
-            matrixActive = !matrixActive;
-
-            if (matrixActive) {
-                canvas.style.display = 'block';
-                initRain();
-                matrixInterval = setInterval(drawMatrix, 30);
-                btn.innerHTML = '🔴 MATRIX: ON';
-                btn.style.boxShadow = '0 0 20px rgba(239, 68, 68, 0.4)';
-            } else {
-                clearInterval(matrixInterval);
+            if (canvas.style.display === 'block') {
                 canvas.style.display = 'none';
-                btn.innerHTML = '🟢 MATRIX: OFF';
-                btn.style.boxShadow = '0 0 10px rgba(0, 240, 255, 0.1)';
+                clearInterval(matrixInterval);
+                btn.textContent = '🟢 MATRIX: OFF';
+                btn.style.borderColor = 'var(--neon-color)';
+                btn.style.color = 'var(--neon-color)';
+            } else {
+                canvas.style.display = 'block';
+                btn.textContent = '🔴 MATRIX: ON';
+                btn.style.borderColor = '#00ff00';
+                btn.style.color = '#00ff00';
+                initMatrix();
+            }
+        }
+
+        function initMatrix() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            const columns = Math.floor(canvas.width / 20) + 1;
+            const yPositions = Array(columns).fill(0);
+
+            function step() {
+                ctx.fillStyle = 'rgba(13, 17, 23, 0.08)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#0f0';
+                ctx.font = '15pt Courier New';
+
+                yPositions.forEach((y, index) => {
+                    const text = String.fromCharCode(33 + Math.random() * 93);
+                    const x = index * 20;
+                    ctx.fillText(text, x, y);
+                    if (y > 100 + Math.random() * 10000) {
+                        yPositions[index] = 0;
+                    } else {
+                        yPositions[index] = y + 20;
+                    }
+                });
+            }
+            clearInterval(matrixInterval);
+            matrixInterval = setInterval(step, 33);
+        }
+
+        window.addEventListener('resize', () => {
+            if (canvas.style.display === 'block') {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+        });
+
+        // ==========================================
+        // OYUN 1: SAYI TAHMİN OYUNU
+        // ==========================================
+        let secretNum, attempts, bestGuess = localStorage.getItem('guessBestScore') || '--';
+        document.getElementById('guessBest').textContent = bestGuess;
+
+        function resetGuessGame() {
+            secretNum = Math.floor(Math.random() * 100) + 1;
+            attempts = 6;
+            document.getElementById('remainingAttempts').textContent = attempts;
+            document.getElementById('guessInput').value = '';
+            document.getElementById('guessInput').disabled = false;
+            document.getElementById('guessResult').textContent = '';
+            document.getElementById('guessResult').style.color = 'var(--text-color)';
+            document.getElementById('restartGameBtn').style.display = 'none';
+            document.getElementById('guessInputArea').style.display = 'block';
+        }
+        resetGuessGame();
+
+        function playGuessGame() {
+            const inputVal = parseInt(document.getElementById('guessInput').value);
+            if (isNaN(inputVal) || inputVal < 1 || inputVal > 100) {
+                document.getElementById('guessResult').textContent = 'Lütfen 1 ile 100 arasında bir sayı girin!';
+                document.getElementById('guessResult').style.color = '#ef4444';
+                return;
+            }
+
+            attempts--;
+            document.getElementById('remainingAttempts').textContent = attempts;
+
+            if (inputVal === secretNum) {
+                Synth.playWin();
+                const usedMoves = 6 - attempts;
+                document.getElementById('guessResult').textContent = `Tebrikler! ${usedMoves} denemede buldun! 🎉`;
+                document.getElementById('guessResult').style.color = '#10b981';
+                document.getElementById('guessInput').disabled = true;
+                document.getElementById('guessInputArea').style.display = 'none';
+                document.getElementById('restartGameBtn').style.display = 'block';
+
+                if (bestGuess === '--' || usedMoves < parseInt(bestGuess)) {
+                    bestGuess = usedMoves;
+                    localStorage.setItem('guessBestScore', bestGuess);
+                    document.getElementById('guessBest').textContent = bestGuess;
+                }
+            } else if (attempts === 0) {
+                Synth.playExplosion();
+                document.getElementById('guessResult').textContent = `Hakkın bitti! Gizli sayı şuydu: ${secretNum} 💀`;
+                document.getElementById('guessResult').style.color = '#ef4444';
+                document.getElementById('guessInput').disabled = true;
+                document.getElementById('guessInputArea').style.display = 'none';
+                document.getElementById('restartGameBtn').style.display = 'block';
+            } else {
+                document.getElementById('guessResult').textContent = inputVal < secretNum ? 'Daha BÜYÜK bir sayı dene! 📈' : 'Daha KÜÇÜK bir sayı dene! 📉';
+                document.getElementById('guessResult').style.color = 'var(--primary-color)';
+            }
+        }
+
+        // ==========================================
+        // OYUN 2: YAŞAM DASHBOARD'U
+        // ==========================================
+        let dashTimer = null;
+        function startDashboard() {
+            const bDateStr = document.getElementById('birthDateInput').value;
+            if (!bDateStr) return;
+
+            document.getElementById('ageInputArea').style.display = 'none';
+            document.getElementById('dashboardDisplay').style.display = 'block';
+
+            const birthDate = new Date(bDateStr);
+            
+            clearInterval(dashTimer);
+            dashTimer = setInterval(() => {
+                const now = new Date();
+                const diffMs = now - birthDate;
+                if (diffMs < 0) return;
+
+                const seconds = Math.floor(diffMs / 1000);
+                document.getElementById('liveSec').textContent = seconds.toLocaleString('en-US');
+
+                // Biyometrik / Kozmik Tahminler
+                document.getElementById('valHeart').textContent = Math.floor(seconds * 1.15).toLocaleString('en-US');
+                document.getElementById('valBreath').textContent = Math.floor(seconds * 0.27).toLocaleString('en-US');
+                document.getElementById('valEarth').textContent = Math.floor(seconds * 30).toLocaleString('en-US');
+                
+                const years = (diffMs / (1000 * 60 * 60 * 24 * 365.25)).toFixed(8);
+                document.getElementById('valAge').textContent = years;
+
+                // Burçlar ve Analizler
+                const day = birthDate.getDate();
+                const month = birthDate.getMonth() + 1;
+                document.getElementById('valZodiac').textContent = getZodiacSign(day, month);
+                document.getElementById('valChinese').textContent = getChineseZodiac(birthDate.getFullYear());
+                document.getElementById('valGeneration').textContent = getGeneration(birthDate.getFullYear());
+                document.getElementById('valNextBirthday').textContent = getDaysToNextBirthday(birthDate);
+            }, 1000);
+        }
+
+        function stopDashboardTimer() {
+            clearInterval(dashTimer);
+            document.getElementById('ageInputArea').style.display = 'block';
+            document.getElementById('dashboardDisplay').style.display = 'none';
+        }
+
+        function getZodiacSign(day, month) {
+            if ((month == 3 && day >= 21) || (month == 4 && day <= 19)) return "Koç ♈";
+            if ((month == 4 && day >= 20) || (month == 5 && day <= 20)) return "Boğa ♉";
+            if ((month == 5 && day >= 21) || (month == 6 && day <= 20)) return "İkizler ♊";
+            if ((month == 6 && day >= 21) || (month == 7 && day <= 22)) return "Yengeç ♋";
+            if ((month == 7 && day >= 23) || (month == 8 && day <= 22)) return "Aslan ♌";
+            if ((month == 8 && day >= 23) || (month == 9 && day <= 22)) return "Başak ♍";
+            if ((month == 9 && day >= 23) || (month == 10 && day <= 22)) return "Terazi ♎";
+            if ((month == 10 && day >= 23) || (month == 11 && day <= 21)) return "Akrep ♏";
+            if ((month == 11 && day >= 22) || (month == 12 && day <= 21)) return "Yay ♐";
+            if ((month == 12 && day >= 22) || (month == 1 && day <= 19)) return "Oğlak ♑";
+            if ((month == 1 && day >= 20) || (month == 2 && day <= 18)) return "Kova ♒";
+            return "Balık ♓";
+        }
+
+        function getChineseZodiac(year) {
+            const animals = ["Maymun 🐒", "Horoz 🐓", "Köpek 🐕", "Domuz 🐖", "Fare 🐀", "Öküz 🐂", "Kaplan 🐅", "Tavşan 🐇", "Ejderha 🐉", "Yılan 🐍", "At 🐎", "Keçi 🐐"];
+            return animals[year % 12];
+        }
+
+        function getGeneration(year) {
+            if (year >= 2013) return "Alfa Kuşağı 🚀";
+            if (year >= 1997) return "Z Kuşağı ⚡";
+            if (year >= 1981) return "Y Kuşağı (Millennial) 🌐";
+            if (year >= 1965) return "X Kuşağı 📻";
+            return "Baby Boomer 📺";
+        }
+
+        function getDaysToNextBirthday(birthDate) {
+            const today = new Date();
+            let nextBD = new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate());
+            if (today > nextBD) {
+                nextBD.setFullYear(today.getFullYear() + 1);
+            }
+            const diffTime = nextBD - today;
+            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        }
+
+        // ==========================================
+        // OYUN 3: KOZMİK EŞLEŞTİRME OYUNU
+        // ==========================================
+        const symbols = ['🛸', '🛸', '👾', '👾', '🚀', '🚀', '☄️', '☄️', '🌌', '🌌', '🧬', '🧬', '🛰️', '🛰️', '🪐', '🪐'];
+        let shuffledSymbols = [];
+        let flippedCards = [];
+        let moves = 0, matches = 0, memoryBest = localStorage.getItem('memoryBestScore') || '--';
+        document.getElementById('memoryBest').textContent = memoryBest;
+
+        function initMemoryGame() {
+            moves = 0; matches = 0; flippedCards = [];
+            document.getElementById('memoryMoves').textContent = moves;
+            document.getElementById('memoryResult').textContent = '';
+            shuffledSymbols = [...symbols].sort(() => Math.random() - 0.5);
+
+            const grid = document.getElementById('memoryGrid');
+            grid.innerHTML = '';
+            for (let i = 0; i < 16; i++) {
+                const mCard = document.createElement('div');
+                mCard.classList.add('memory-card');
+                mCard.dataset.index = i;
+                mCard.addEventListener('click', onMemoryCardClick);
+                grid.appendChild(mCard);
+            }
+        }
+
+        function onMemoryCardClick(e) {
+            const card = e.currentTarget;
+            if (card.classList.contains('flipped') || card.classList.contains('matched') || flippedCards.length >= 2) return;
+
+            card.classList.add('flipped');
+            card.textContent = shuffledSymbols[card.dataset.index];
+            flippedCards.push(card);
+
+            if (flippedCards.length === 2) {
+                moves++;
+                document.getElementById('memoryMoves').textContent = moves;
+                checkMemoryMatch();
+            }
+        }
+
+        function checkMemoryMatch() {
+            const [card1, card2] = flippedCards;
+            if (shuffledSymbols[card1.dataset.index] === shuffledSymbols[card2.dataset.index]) {
+                card1.classList.add('matched');
+                card2.classList.add('matched');
+                flippedCards = [];
+                matches++;
+                if (matches === 8) {
+                    Synth.playWin();
+                    document.getElementById('memoryResult').textContent = `Harika! ${moves} hamlede tamamladın! 🎉`;
+                    if (memoryBest === '--' || moves < parseInt(memoryBest)) {
+                        memoryBest = moves;
+                        localStorage.setItem('memoryBestScore', memoryBest);
+                        document.getElementById('memoryBest').textContent = memoryBest;
+                    }
+                }
+            } else {
+                setTimeout(() => {
+                    card1.classList.remove('flipped');
+                    card1.textContent = '';
+                    card2.classList.remove('flipped');
+                    card2.textContent = '';
+                    flippedCards = [];
+                }, 1000);
+            }
+        }
+
+        // ==========================================
+        // OYUN 4: KOZMİK SUDOKU
+        // ==========================================
+        let currentSudokuGrid = [];
+        let solvedSudokuGrid = [];
+        let selectedCellIndex = null;
+
+        function initSudokuGame() {
+            document.getElementById('sudokuResult').textContent = '';
+            selectedCellIndex = null;
+            
+            // 9x9 Şablon Üretici (Sabit Şablonlar)
+            const puzzles = [
+                {
+                    start: [
+                        5,3,0, 0,7,0, 0,0,0,
+                        6,0,0, 1,9,5, 0,0,0,
+                        0,9,8, 0,0,0, 0,6,0,
+                        8,0,0, 0,6,0, 0,0,3,
+                        4,0,0, 8,0,3, 0,0,1,
+                        7,0,0, 0,2,0, 0,0,6,
+                        0,6,0, 0,0,0, 2,8,0,
+                        0,0,0, 4,1,9, 0,0,5,
+                        0,0,0, 0,8,0, 0,7,9
+                    ],
+                    solved: [
+                        5,3,4, 6,7,8, 9,1,2,
+                        6,7,2, 1,9,5, 3,4,8,
+                        1,9,8, 3,4,2, 5,6,7,
+                        8,5,9, 7,6,1, 4,2,3,
+                        4,2,6, 8,5,3, 7,9,1,
+                        7,1,3, 9,2,4, 8,5,6,
+                        9,6,5, 5,3,7, 2,8,4,
+                        2,8,7, 4,1,9, 6,3,5,
+                        3,4,1, 2,8,6, 5,7,9
+                    ]
+                }
+            ];
+
+            const puzzle = puzzles[0]; // Basitlik adına 1. şablon
+            currentSudokuGrid = [...puzzle.start];
+            solvedSudokuGrid = [...puzzle.solved];
+
+            renderSudokuBoard();
+        }
+
+        function renderSudokuBoard() {
+            const gridContainer = document.getElementById('sudokuGrid');
+            gridContainer.innerHTML = '';
+
+            for (let i = 0; i < 81; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('sudoku-cell');
+                cell.dataset.index = i;
+
+                if (currentSudokuGrid[i] !== 0) {
+                    cell.textContent = currentSudokuGrid[i];
+                    cell.style.color = 'var(--text-muted)';
+                } else {
+                    cell.classList.add('user-filled');
+                    cell.addEventListener('click', () => selectSudokuCell(i));
+                }
+
+                gridContainer.appendChild(cell);
+            }
+        }
+
+        function selectSudokuCell(index) {
+            const cells = document.querySelectorAll('.sudoku-cell');
+            cells.forEach(c => c.classList.remove('selected'));
+
+            selectedCellIndex = index;
+            cells[index].classList.add('selected');
+        }
+
+        function fillSelectedCell(num) {
+            if (selectedCellIndex === null) return;
+            currentSudokuGrid[selectedCellIndex] = num;
+            
+            const cell = document.querySelector(`.sudoku-cell[data-index='${selectedCellIndex}']`);
+            cell.textContent = num;
+        }
+
+        function clearSelectedCell() {
+            if (selectedCellIndex === null) return;
+            currentSudokuGrid[selectedCellIndex] = 0;
+            const cell = document.querySelector(`.sudoku-cell[data-index='${selectedCellIndex}']`);
+            cell.textContent = '';
+        }
+
+        function checkSudokuSolution() {
+            let correct = true;
+            for (let i = 0; i < 81; i++) {
+                if (currentSudokuGrid[i] !== solvedSudokuGrid[i]) {
+                    correct = false;
+                    break;
+                }
+            }
+
+            const result = document.getElementById('sudokuResult');
+            if (correct) {
+                Synth.playWin();
+                result.textContent = 'Mükemmel! Sudoku Başarıyla Çözüldü! 🌟';
+                result.style.color = '#10b981';
+            } else {
+                Synth.playExplosion();
+                result.textContent = 'Bir yerlerde hata var, tekrar kontrol et! ❌';
+                result.style.color = '#ef4444';
+            }
+        }
+
+        // ==========================================
+        // OYUN 5: SİBER MAYIN TARLASI OYUNU
+        // ==========================================
+        let mines = [];
+        let revealed = [];
+        let flagged = [];
+        let isGameOver = false;
+        let isFlagMode = false;
+        let minesTimer = 0;
+        let minesTimerInterval = null;
+        let minesBest = localStorage.getItem('minesBestTime') || '--';
+        document.getElementById('minesBest').textContent = minesBest;
+
+        function toggleMineMode() {
+            isFlagMode = !isFlagMode;
+            const btn = document.getElementById('mineModeBtn');
+            if (isFlagMode) {
+                btn.textContent = '🚩 BAYRAK';
+                btn.style.color = '#f59e0b';
+                btn.style.borderColor = '#f59e0b';
+            } else {
+                btn.textContent = '🚀 KAZMA';
+                btn.style.color = 'var(--primary-color)';
+                btn.style.borderColor = 'var(--primary-color)';
+            }
+        }
+
+        function initMinesGame() {
+            mines = Array(36).fill(0);
+            revealed = Array(36).fill(false);
+            flagged = Array(36).fill(false);
+            isGameOver = false;
+            minesTimer = 0;
+            document.getElementById('minesTimer').textContent = minesTimer;
+            document.getElementById('minesResult').textContent = '';
+
+            // 6 Rastgele Mayın Yerleştirme
+            let placedMines = 0;
+            while (placedMines < 6) {
+                const idx = Math.floor(Math.random() * 36);
+                if (mines[idx] !== 'M') {
+                    mines[idx] = 'M';
+                    placedMines++;
+                }
+            }
+
+            // Komşu Mayın Sayılarını Hesaplama
+            for (let i = 0; i < 36; i++) {
+                if (mines[i] === 'M') continue;
+                let count = 0;
+                const r = Math.floor(i / 6);
+                const c = i % 6;
+
+                for (let dr = -1; dr <= 1; dr++) {
+                    for (let dc = -1; dc <= 1; dc++) {
+                        const nr = r + dr;
+                        const nc = c + dc;
+                        if (nr >= 0 && nr < 6 && nc >= 0 && nc < 6) {
+                            if (mines[nr * 6 + nc] === 'M') count++;
+                        }
+                    }
+                }
+                mines[i] = count;
+            }
+
+            clearInterval(minesTimerInterval);
+            minesTimerInterval = setInterval(() => {
+                if (!isGameOver) {
+                    minesTimer++;
+                    document.getElementById('minesTimer').textContent = minesTimer;
+                }
+            }, 1000);
+
+            renderMinesBoard();
+        }
+
+        function renderMinesBoard() {
+            const grid = document.getElementById('minesGrid');
+            grid.innerHTML = '';
+
+            for (let i = 0; i < 36; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('mines-cell');
+                cell.dataset.index = i;
+                cell.addEventListener('click', onMinesCellClick);
+                grid.appendChild(cell);
+            }
+        }
+
+        function onMinesCellClick(e) {
+            if (isGameOver) return;
+            const idx = parseInt(e.currentTarget.dataset.index);
+
+            if (isFlagMode) {
+                if (revealed[idx]) return;
+                flagged[idx] = !flagged[idx];
+                const cell = e.currentTarget;
+                if (flagged[idx]) {
+                    cell.textContent = '🚩';
+                    cell.classList.add('flagged');
+                } else {
+                    cell.textContent = '';
+                    cell.classList.remove('flagged');
+                }
+            } else {
+                if (flagged[idx] || revealed[idx]) return;
+                revealCell(idx);
+            }
+        }
+
+        function revealCell(idx) {
+            revealed[idx] = true;
+            const cell = document.querySelector(`.mines-cell[data-index='${idx}']`);
+            cell.classList.add('revealed');
+
+            if (mines[idx] === 'M') {
+                // Mayın Patlama Senaryosu
+                isGameOver = true;
+                Synth.playExplosion();
+                clearInterval(minesTimerInterval);
+                document.getElementById('minesResult').textContent = 'SİBER MAYIN TETİKLENDİ! SİSTEM BOZULDU! 💀';
+                revealAllMines();
+            } else {
+                if (mines[idx] > 0) {
+                    cell.textContent = mines[idx];
+                } else {
+                    // Boş Hücre ise Komşuları Otomatik Aç (Rekürsif Dağılım)
+                    const r = Math.floor(idx / 6);
+                    const c = idx % 6;
+                    for (let dr = -1; dr <= 1; dr++) {
+                        for (let dc = -1; dc <= 1; dc++) {
+                            const nr = r + dr;
+                            const nc = c + dc;
+                            if (nr >= 0 && nr < 6 && nc >= 0 && nc < 6) {
+                                const nIdx = nr * 6 + nc;
+                                if (!revealed[nIdx] && !flagged[nIdx]) {
+                                    revealCell(nIdx);
+                                }
+                            }
+                        }
+                    }
+                }
+                checkMinesVictory();
+            }
+        }
+
+        function revealAllMines() {
+            for (let i = 0; i < 36; i++) {
+                if (mines[i] === 'M') {
+                    const cell = document.querySelector(`.mines-cell[data-index='${i}']`);
+                    cell.classList.add('revealed', 'mine');
+                    cell.textContent = '💣';
+                }
+            }
+        }
+
+        function checkMinesVictory() {
+            let win = true;
+            for (let i = 0; i < 36; i++) {
+                if (mines[i] !== 'M' && !revealed[i]) {
+                    win = false;
+                    break;
+                }
+            }
+
+            if (win) {
+                isGameOver = true;
+                Synth.playWin();
+                clearInterval(minesTimerInterval);
+                document.getElementById('minesResult').textContent = 'Tebrikler! Siber Alan Güvenli! 🎉';
+                document.getElementById('minesResult').style.color = '#10b981';
+
+                if (minesBest === '--' || minesTimer < parseInt(minesBest)) {
+                    minesBest = minesTimer;
+                    localStorage.setItem('minesBestTime', minesBest);
+                    document.getElementById('minesBest').textContent = minesBest;
+                }
             }
         }
     </script>
