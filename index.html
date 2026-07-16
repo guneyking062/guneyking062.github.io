@@ -65,12 +65,20 @@
             z-index: -1;
         }
 
-        #matrixCanvas {
+        /* ARKA PLAN TUVAL YAPILARI */
+        #matrixCanvas, #particleCanvas {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: -2;
+            pointer-events: none;
+        }
+        #matrixCanvas {
             display: none;
             opacity: 0.55;
+        }
+        #particleCanvas {
+            display: block;
+            opacity: 0.7;
         }
 
         /* NAVBAR */
@@ -473,11 +481,33 @@
         .mines-cell.revealed { background: #21262d; border-color: var(--text-muted); cursor: default; }
         .mines-cell.mine { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #ef4444; }
         .mines-cell.flagged { color: #f59e0b; }
+
+        /* TOAST BİLDİRİM SİSTEMİ */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(13, 17, 23, 0.95);
+            border: 2px solid var(--neon-color);
+            box-shadow: 0 0 20px var(--neon-color);
+            border-radius: 15px;
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 2000;
+            transform: translateY(150px);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .toast.show {
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body>
 
     <canvas id="matrixCanvas"></canvas>
+    <canvas id="particleCanvas"></canvas>
 
     <div class="navbar">
         <div class="logo">GÜNEYKING</div>
@@ -488,11 +518,34 @@
                 <option value="toxic">🟢 TOXIC GREEN</option>
                 <option value="solana">🟠 SOLANA TURUNCU</option>
             </select>
-            <button class="matrix-toggle-btn" onclick="toggleMatrix()">🟢 MATRIX: OFF</button>
+            <button id="bgToggleBtn" class="matrix-toggle-btn" onclick="cycleBackground()">🌌 BG: PARTICLES</button>
         </div>
     </div>
 
     <div class="container">
+        
+        <div class="card" style="grid-column: 1 / -1; display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: space-between; padding: 25px; border-color: var(--neon-color); box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);">
+            <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+                <div style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--neon-color); display: flex; align-items: center; justify-content: center; font-size: 36px; background: rgba(0, 240, 255, 0.1); box-shadow: 0 0 15px var(--neon-color);">
+                    👑
+                </div>
+                <div>
+                    <h2 style="color: var(--text-color); font-size: 24px; margin-bottom: 5px; text-shadow: 0 0 10px var(--neon-color);">GÜNEYKING Pass</h2>
+                    <div style="color: var(--primary-color); font-weight: bold; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;" id="userTitle">Çırak Hacker</div>
+                </div>
+            </div>
+            <div style="flex-grow: 1; max-width: 450px; min-width: 280px; margin: 15px 0;">
+                <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px;">
+                    <span style="color: var(--text-muted);">Mevcut Seviye: <strong id="userLevel" style="color: var(--neon-color); font-size: 16px;">1</strong></span>
+                    <span style="color: var(--text-muted);"><span id="userCurrentXP">0</span> / <span id="userNextLevelXP">300</span> XP</span>
+                </div>
+                <div style="width: 100%; height: 12px; background: #161b22; border-radius: 6px; border: 1px solid var(--border-color); overflow: hidden; position: relative;">
+                    <div id="xpProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, var(--primary-color), var(--neon-color)); transition: width 0.4s ease; box-shadow: 0 0 10px var(--neon-color);"></div>
+                </div>
+            </div>
+            <button class="action-btn" style="width: auto; padding: 12px 25px; border-radius: 12px; font-size: 14px;" onclick="openModal('achievementsModal')">🏆 BAŞARIMLARI GÖR</button>
+        </div>
+
         <div class="card">
             <button class="info-btn" onclick="openInfoModal('guessInfo')">?</button>
             <div class="card-img">
@@ -577,6 +630,82 @@
                     <div class="card-desc">Sanal ağlarda gezin, neon veri paketlerini topla ve kendini çarpmadan en yüksek skora ulaş!</div>
                 </div>
                 <button class="card-btn" onclick="openModal('snakeModal')">OYUNU BAŞLAT</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="achievementsModal" class="modal">
+        <div class="modal-content" style="max-width: 600px; border-color: var(--neon-color);">
+            <span class="close-btn" onclick="closeModal('achievementsModal')">&times;</span>
+            <h2 style="color: var(--neon-color); margin-bottom: 15px;">🏆 GÜNEYKING Başarımları</h2>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Oyunları tamamlayarak siber başarımları topla ve seviyeni yükselt!</p>
+            
+            <div id="achievementsList" style="display: flex; flex-direction: column; gap: 12px; text-align: left; max-height: 400px; overflow-y: auto; padding-right: 5px;">
+                <div class="metric-box" style="flex-direction: row; justify-content: space-between; text-align: left; padding: 15px; align-items: center;" id="ach_guess_master">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span style="font-size: 28px; filter: grayscale(100%); opacity: 0.4;" id="icon_guess_master">🧠</span>
+                        <div>
+                            <h4 style="color: var(--text-color); margin-bottom: 4px;">Sayı Dedektifi</h4>
+                            <p style="font-size: 11px; color: var(--text-muted);">Sayı Tahmin oyununda gizli sayıyı 3 veya daha az hamlede bul.</p>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="color: var(--neon-color); font-weight: bold; font-size: 13px;">+150 XP</span>
+                        <div style="font-size: 10px; color: var(--text-muted); margin-top: 5px;" id="status_guess_master">KİLİTLİ</div>
+                    </div>
+                </div>
+                <div class="metric-box" style="flex-direction: row; justify-content: space-between; text-align: left; padding: 15px; align-items: center;" id="ach_snake_pro">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span style="font-size: 28px; filter: grayscale(100%); opacity: 0.4;" id="icon_snake_pro">🐍</span>
+                        <div>
+                            <h4 style="color: var(--text-color); margin-bottom: 4px;">Siber Anakonda</h4>
+                            <p style="font-size: 11px; color: var(--text-muted);">Siber Yılan oyununda en az 50 puan skor elde et.</p>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="color: var(--neon-color); font-weight: bold; font-size: 13px;">+200 XP</span>
+                        <div style="font-size: 10px; color: var(--text-muted); margin-top: 5px;" id="status_snake_pro">KİLİTLİ</div>
+                    </div>
+                </div>
+                <div class="metric-box" style="flex-direction: row; justify-content: space-between; text-align: left; padding: 15px; align-items: center;" id="ach_mines_speedrun">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span style="font-size: 28px; filter: grayscale(100%); opacity: 0.4;" id="icon_mines_speedrun">⚡</span>
+                        <div>
+                            <h4 style="color: var(--text-color); margin-bottom: 4px;">Siber Mayın Uzmanı</h4>
+                            <p style="font-size: 11px; color: var(--text-muted);">Mayın Tarlası oyununu 60 saniyenin altında hatasız çöz.</p>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="color: var(--neon-color); font-weight: bold; font-size: 13px;">+250 XP</span>
+                        <div style="font-size: 10px; color: var(--text-muted); margin-top: 5px;" id="status_mines_speedrun">KİLİTLİ</div>
+                    </div>
+                </div>
+                <div class="metric-box" style="flex-direction: row; justify-content: space-between; text-align: left; padding: 15px; align-items: center;" id="ach_memory_god">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span style="font-size: 28px; filter: grayscale(100%); opacity: 0.4;" id="icon_memory_god">🔮</span>
+                        <div>
+                            <h4 style="color: var(--text-color); margin-bottom: 4px;">Kozmik Hafıza</h4>
+                            <p style="font-size: 11px; color: var(--text-muted);">Kozmik Eşleştirme oyununu 12 veya daha az hamlede tamamla.</p>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="color: var(--neon-color); font-weight: bold; font-size: 13px;">+150 XP</span>
+                        <div style="font-size: 10px; color: var(--text-muted); margin-top: 5px;" id="status_memory_god">KİLİTLİ</div>
+                    </div>
+                </div>
+                <div class="metric-box" style="flex-direction: row; justify-content: space-between; text-align: left; padding: 15px; align-items: center;" id="ach_sudoku_genius">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span style="font-size: 28px; filter: grayscale(100%); opacity: 0.4;" id="icon_sudoku_genius">🌌</span>
+                        <div>
+                            <h4 style="color: var(--text-color); margin-bottom: 4px;">Kozmik Deha</h4>
+                            <p style="font-size: 11px; color: var(--text-muted);">Kozmik Sudoku bulmacasını doğru şekilde çöz.</p>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="color: var(--neon-color); font-weight: bold; font-size: 13px;">+200 XP</span>
+                        <div style="font-size: 10px; color: var(--text-muted); margin-top: 5px;" id="status_sudoku_genius">KİLİTLİ</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -833,6 +962,14 @@
         </div>
     </div>
 
+    <div id="cyberToast" class="toast">
+        <span id="toastIcon" style="font-size: 30px;">⚡</span>
+        <div style="text-align: left;">
+            <h4 id="toastTitle" style="color: var(--text-color); margin-bottom: 3px; font-weight: bold; font-size: 14px;">Siber Protokol</h4>
+            <p id="toastDesc" style="color: var(--text-muted); font-size: 12px; line-height: 1.4;"></p>
+        </div>
+    </div>
+
 
     <script>
         // --- 1. MODAL KONTROLLERİ ---
@@ -862,7 +999,7 @@
             }
         }
 
-        // --- 2. TEMA DEĞİŞTİRME VE MATRIX ---
+        // --- 2. TEMA DEĞİŞTİRME ---
         function changeTheme(theme) {
             document.body.className = '';
             if(theme !== 'original') {
@@ -870,18 +1007,35 @@
             }
         }
 
+        // --- 3. ARKA PLAN SEÇENEKLERİ (MATRIX & INTERACTIVE PARTICLES) ---
+        let bgMode = 'particles'; // 'particles', 'matrix', 'off'
         let matrixActive = false;
         let matrixInterval;
         const canvas = document.getElementById('matrixCanvas');
         const ctx = canvas.getContext('2d');
 
+        const pCanvas = document.getElementById('particleCanvas');
+        const pCtx = pCanvas.getContext('2d');
+        let particles = [];
+        let mouse = { x: null, y: null, radius: 140 };
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+        window.addEventListener('mouseout', () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
+
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+            pCanvas.width = window.innerWidth;
+            pCanvas.height = window.innerHeight;
         }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
 
+        // MATRIX YAĞMURU KODU
         const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズヅブプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン';
         const alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         const rainChars = katakana + alphabet;
@@ -895,6 +1049,7 @@
         }
 
         function drawMatrix() {
+            if (bgMode !== 'matrix') return;
             ctx.fillStyle = 'rgba(13, 17, 23, 0.12)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
@@ -912,27 +1067,229 @@
             }
         }
 
-        function toggleMatrix() {
-            const btn = document.querySelector('.matrix-toggle-btn');
-            matrixActive = !matrixActive;
-            if(matrixActive) {
+        // İNTERAKTİF PARÇACIK (PARTICLE) KODU
+        class Particle {
+            constructor() {
+                this.x = Math.random() * pCanvas.width;
+                this.y = Math.random() * pCanvas.height;
+                this.vx = (Math.random() - 0.5) * 1.2;
+                this.vy = (Math.random() - 0.5) * 1.2;
+                this.radius = Math.random() * 2 + 1.5;
+            }
+            draw() {
+                pCtx.beginPath();
+                pCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                pCtx.fillStyle = getComputedStyle(document.body).getPropertyValue('--neon-color').trim() || '#00f0ff';
+                pCtx.fill();
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                if (this.x < 0 || this.x > pCanvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > pCanvas.height) this.vy *= -1;
+
+                if (mouse.x !== null && mouse.y !== null) {
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < mouse.radius) {
+                        let force = (mouse.radius - dist) / mouse.radius;
+                        this.x -= (dx / dist) * force * 2.5;
+                        this.y -= (dy / dist) * force * 2.5;
+                    }
+                }
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            const count = Math.floor((pCanvas.width * pCanvas.height) / 9500);
+            for(let i = 0; i < count; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            if (bgMode !== 'particles') return;
+            pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            connectParticles();
+            requestAnimationFrame(animateParticles);
+        }
+
+        function connectParticles() {
+            const neonColor = getComputedStyle(document.body).getPropertyValue('--neon-color').trim() || '#00f0ff';
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    let dx = particles[i].x - particles[j].x;
+                    let dy = particles[i].y - particles[j].y;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 100) {
+                        let opacity = 1 - (dist / 100);
+                        pCtx.strokeStyle = hexToRgba(neonColor, opacity * 0.25);
+                        pCtx.lineWidth = 1;
+                        pCtx.beginPath();
+                        pCtx.moveTo(particles[i].x, particles[i].y);
+                        pCtx.lineTo(particles[j].x, particles[j].y);
+                        pCtx.stroke();
+                    }
+                }
+            }
+        }
+
+        function hexToRgba(hex, alpha) {
+            hex = hex.replace('#', '');
+            if (hex.length === 3) {
+                hex = hex.split('').map(char => char + char).join('');
+            }
+            let r = parseInt(hex.substring(0, 2), 16);
+            let g = parseInt(hex.substring(2, 4), 16);
+            let b = parseInt(hex.substring(4, 6), 16);
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        }
+
+        function cycleBackground() {
+            const btn = document.getElementById('bgToggleBtn');
+            if (bgMode === 'particles') {
+                bgMode = 'matrix';
+                pCanvas.style.display = 'none';
                 canvas.style.display = 'block';
                 initMatrix();
+                clearInterval(matrixInterval);
                 matrixInterval = setInterval(drawMatrix, 30);
-                btn.innerText = "🔴 MATRIX: ON";
-                btn.style.background = "var(--neon-color)";
-                btn.style.color = "#0d1117";
-            } else {
+                btn.innerText = "🟢 BG: MATRIX";
+            } else if (bgMode === 'matrix') {
+                bgMode = 'off';
                 canvas.style.display = 'none';
                 clearInterval(matrixInterval);
-                btn.innerText = "🟢 MATRIX: OFF";
-                btn.style.background = "rgba(0, 240, 255, 0.05)";
-                btn.style.color = "var(--neon-color)";
+                btn.innerText = "⚫ BG: OFF";
+            } else {
+                bgMode = 'particles';
+                pCanvas.style.display = 'block';
+                initParticles();
+                animateParticles();
+                btn.innerText = "🌌 BG: PARTICLES";
             }
         }
 
 
-        // --- 3. SAYI TAHMİN OYUNU ---
+        // --- 4. GÜNEYKING PASS & BAŞARIM KONTROLLERİ ---
+        let userXP = 0;
+        let userLevel = 1;
+        let unlockedAchievements = [];
+
+        function initPassSystem() {
+            if (localStorage.getItem('userXP')) userXP = parseInt(localStorage.getItem('userXP'));
+            if (localStorage.getItem('userLevel')) userLevel = parseInt(localStorage.getItem('userLevel'));
+            if (localStorage.getItem('unlockedAchievements')) unlockedAchievements = JSON.parse(localStorage.getItem('unlockedAchievements'));
+            
+            updatePassUI();
+            syncAchievementsUI();
+        }
+
+        function getNextLevelXP(lvl) {
+            return lvl * 300;
+        }
+
+        function addXP(amount) {
+            userXP += amount;
+            showToast("⚡ +" + amount + " XP", "Kozmik veri akışı siber ağlarına aktarıldı.");
+            
+            let xpNeeded = getNextLevelXP(userLevel);
+            let leveledUp = false;
+            while (userXP >= xpNeeded) {
+                userXP -= xpNeeded;
+                userLevel++;
+                xpNeeded = getNextLevelXP(userLevel);
+                leveledUp = true;
+            }
+            
+            if (leveledUp) {
+                setTimeout(() => {
+                    showToast("🎉 SEVİYE ATLADIN!", `Tebrikler Güneyking! Yeni Seviyen: ${userLevel}. Yeni yeteneklerin kilidi açıldı.`, "👑");
+                }, 1200);
+            }
+
+            localStorage.setItem('userXP', userXP);
+            localStorage.setItem('userLevel', userLevel);
+            updatePassUI();
+        }
+
+        function updatePassUI() {
+            document.getElementById('userLevel').innerText = userLevel;
+            document.getElementById('userCurrentXP').innerText = userXP;
+            const nextXP = getNextLevelXP(userLevel);
+            document.getElementById('userNextLevelXP').innerText = nextXP;
+            
+            const pct = (userXP / nextXP) * 100;
+            document.getElementById('xpProgressBar').style.width = pct + "%";
+
+            // Seviyeye Göre Siber Unvanlar
+            let title = "Çırak Hacker";
+            if (userLevel >= 12) title = "Kozmik Hükümdar 🌌";
+            else if (userLevel >= 8) title = "Siber Tanrı 👁️";
+            else if (userLevel >= 5) title = "Neon Master ⚡";
+            else if (userLevel >= 3) title = "Ağ Güvenlik Lideri 🛡️";
+            else if (userLevel >= 2) title = "Kozmik Kaşif 🛸";
+            
+            document.getElementById('userTitle').innerText = title;
+        }
+
+        function unlockAchievement(id, title, desc, xpReward) {
+            if (unlockedAchievements.includes(id)) return;
+            
+            unlockedAchievements.push(id);
+            localStorage.setItem('unlockedAchievements', JSON.stringify(unlockedAchievements));
+            
+            showToast("🏆 BAŞARIM AÇILDI!", `${title}: ${desc}`, "🏆");
+            addXP(xpReward);
+            syncAchievementsUI();
+        }
+
+        function syncAchievementsUI() {
+            const ids = ['guess_master', 'snake_pro', 'mines_speedrun', 'memory_god', 'sudoku_genius'];
+            ids.forEach(id => {
+                const card = document.getElementById('ach_' + id);
+                const icon = document.getElementById('icon_' + id);
+                const statusText = document.getElementById('status_' + id);
+                
+                if (unlockedAchievements.includes(id)) {
+                    card.style.borderColor = "var(--neon-color)";
+                    card.style.background = "rgba(0, 240, 255, 0.05)";
+                    icon.style.filter = "none";
+                    icon.style.opacity = "1";
+                    statusText.innerText = "KİLİT AÇILDI";
+                    statusText.style.color = "#10b981";
+                    statusText.style.fontWeight = "bold";
+                } else {
+                    card.style.borderColor = "var(--border-color)";
+                    card.style.background = "#161b22";
+                    icon.style.filter = "grayscale(100%)";
+                    icon.style.opacity = "0.4";
+                    statusText.innerText = "KİLİTLİ";
+                    statusText.style.color = "var(--text-muted)";
+                }
+            });
+        }
+
+        function showToast(title, desc, icon = "⚡") {
+            const toast = document.getElementById('cyberToast');
+            document.getElementById('toastTitle').innerText = title;
+            document.getElementById('toastDesc').innerText = desc;
+            document.getElementById('toastIcon').innerText = icon;
+            
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3500);
+        }
+
+
+        // --- 5. SAYI TAHMİN OYUNU ---
         let guessSecret, remainingAttempts, guessBestScore = null;
         function initGuessGame() {
             guessSecret = Math.floor(Math.random() * 100) + 1;
@@ -964,6 +1321,15 @@
                 resultText.style.color = "#10b981";
                 document.getElementById('guessInputArea').style.display = 'none';
                 document.getElementById('restartGameBtn').style.display = 'block';
+                
+                // XP Ödülü
+                addXP(100);
+
+                // Başarım Kontrolü
+                if (scoreUsed <= 3) {
+                    unlockAchievement('guess_master', 'Sayı Dedektifi', 'Sayıyı 3 veya daha az hamlede buldun!', 150);
+                }
+
                 if(!guessBestScore || scoreUsed < guessBestScore) {
                     guessBestScore = scoreUsed;
                     document.getElementById('guessBest').innerText = guessBestScore;
@@ -985,7 +1351,7 @@
         function resetGuessGame() { initGuessGame(); }
 
 
-        // --- 4. YAŞAM DASHBOARDU ---
+        // --- 6. YAŞAM DASHBOARDU ---
         let dashboardInterval;
         function startDashboard() {
             const dateStr = document.getElementById('birthDateInput').value;
@@ -1001,7 +1367,6 @@
                 const diffMs = now - birthDate;
                 const diffSec = Math.floor(diffMs / 1000);
 
-                // Saniye sayacı
                 document.getElementById('liveSec').innerText = diffSec.toLocaleString();
 
                 // Biyometrik veriler
@@ -1018,7 +1383,7 @@
                 const daysLeft = Math.ceil((nextBirthday - now) / (1000 * 3600 * 24));
                 document.getElementById('valNextBirthday').innerText = daysLeft + " gün";
 
-                // Astrolojik burç tayini
+                // Astrolojik analizler
                 const day = birthDate.getDate();
                 const month = birthDate.getMonth() + 1;
                 document.getElementById('valZodiac').innerText = getZodiacSign(day, month);
@@ -1058,7 +1423,7 @@
         }
 
 
-        // --- 5. KOZMİK EŞLEŞTİRME ---
+        // --- 7. KOZMİK EŞLEŞTİRME ---
         const symbols = ['🛸', '🌌', '🚀', '🌟', '📡', '👾', '🌀', '🌍'];
         let memoryCards = [...symbols, ...symbols];
         let flippedCards = [];
@@ -1073,7 +1438,6 @@
             document.getElementById('memoryMoves').innerText = memoryMoves;
             document.getElementById('memoryResult').innerText = "";
             
-            // Kart karıştırma
             memoryCards.sort(() => 0.5 - Math.random());
             
             const grid = document.getElementById('memoryGrid');
@@ -1108,8 +1472,18 @@
                     card2.classList.add('matched');
                     flippedCards = [];
                     matchedCount += 2;
+                    
                     if(matchedCount === memoryCards.length) {
                         document.getElementById('memoryResult').innerText = `✨ Tebrikler! Tüm çiftleri ${memoryMoves} hamlede eşleştirdin!`;
+                        
+                        // XP Ödülü
+                        addXP(100);
+
+                        // Başarım Kontrolü
+                        if (memoryMoves <= 12) {
+                            unlockAchievement('memory_god', 'Kozmik Hafıza', 'Kozmik Eşleştirme oyununu 12 veya daha az hamlede çözdün!', 150);
+                        }
+
                         if(!memoryBestScore || memoryMoves < memoryBestScore) {
                             memoryBestScore = memoryMoves;
                             document.getElementById('memoryBest').innerText = memoryBestScore;
@@ -1128,8 +1502,7 @@
         }
 
 
-        // --- 6. KOZMİK SUDOKU ---
-        // Temel çözülmüş Sudoku şablonu
+        // --- 8. KOZMİK SUDOKU ---
         const baseSolvedSudoku = [
             [5, 3, 4, 6, 7, 8, 9, 1, 2],
             [6, 7, 2, 1, 9, 5, 3, 4, 8],
@@ -1157,11 +1530,10 @@
         }
 
         function initSudokuGame() {
-            shuffleSudokuSolution(); // Her el benzersiz bir çözüm üret
+            shuffleSudokuSolution();
 
-            // Zorluk derecesine göre kapatılacak hücre sayısını belirle
             const difficulty = document.getElementById("sudokuDifficulty").value;
-            let cellsToRemove = 30; // Varsayılan "Kolay"
+            let cellsToRemove = 30;
 
             if (difficulty === "very_easy") cellsToRemove = 15;
             else if (difficulty === "easy") cellsToRemove = 30;
@@ -1171,7 +1543,6 @@
 
             initialSudoku = JSON.parse(JSON.stringify(solvedSudoku));
 
-            // Hücreleri rastgele kaldırarak boşluklar yarat
             let removed = 0;
             while (removed < cellsToRemove) {
                 const row = Math.floor(Math.random() * 9);
@@ -1212,7 +1583,7 @@
                     }
 
                     cell.onclick = (e) => {
-                        if(initialSudoku[row][col] !== 0) return; // Önceden verilenleri seçme
+                        if(initialSudoku[row][col] !== 0) return;
                         document.querySelectorAll('.sudoku-cell').forEach(c => c.classList.remove('selected'));
                         cell.classList.add('selected');
                         selectedSudokuCell = { row, col };
@@ -1246,6 +1617,10 @@
             if(isCorrect) {
                 res.innerText = "🌌 Muhteşem! Evrenin sayısal düzenini doğru çözdün!";
                 res.style.color = "#10b981";
+                
+                // XP Ödülü & Başarım
+                addXP(150);
+                unlockAchievement('sudoku_genius', 'Kozmik Deha', 'İlk kozmik sudoku bulmacanı çözdün!', 200);
             } else {
                 res.innerText = "❌ Bazı sayılar kozmik dengeyle uyuşmuyor. Kontrol et!";
                 res.style.color = "#ef4444";
@@ -1254,14 +1629,14 @@
         initSudokuGame();
 
 
-        // --- 7. SİBER MAYIN TARLASI ---
-        const minesSize = 6; // 6x6 grid
+        // --- 9. SİBER MAYIN TARLASI ---
+        const minesSize = 6;
         const minesCount = 6;
         let minesGridData = [];
         let minesTimer = 0;
         let minesTimerInterval = null;
         let minesBestScore = null;
-        let isMineModeFlag = false; // true = bayrak koy, false = kaza yap/kaz
+        let isMineModeFlag = false;
 
         function initMinesGame() {
             minesGridData = Array(minesSize * minesSize).fill(0).map(() => ({ isMine: false, isRevealed: false, isFlagged: false, neighborMines: 0 }));
@@ -1273,7 +1648,6 @@
             document.getElementById('mineModeBtn').innerText = "🚀 KAZMA";
             document.getElementById('mineModeBtn').style.color = "var(--primary-color)";
 
-            // Mayın yerleştirme
             let placedMines = 0;
             while (placedMines < minesCount) {
                 const randIdx = Math.floor(Math.random() * minesGridData.length);
@@ -1283,14 +1657,12 @@
                 }
             }
 
-            // Komşu hesaplama
             for(let i = 0; i < minesGridData.length; i++) {
                 if(minesGridData[i].isMine) continue;
                 const adjacentIndices = getAdjacentIndices(i);
                 minesGridData[i].neighborMines = adjacentIndices.filter(idx => minesGridData[idx].isMine).length;
             }
 
-            // Sayacı başlat
             minesTimerInterval = setInterval(() => {
                 minesTimer++;
                 document.getElementById('minesTimer').innerText = minesTimer;
@@ -1395,6 +1767,15 @@
                 clearInterval(minesTimerInterval);
                 document.getElementById('minesResult').innerText = `🏆 BAŞARILI! Mayınsız alanları saniyeler içinde temizledin!`;
                 document.getElementById('minesResult').style.color = "#10b981";
+                
+                // XP Ödülü
+                addXP(150);
+
+                // Başarım Kontrolü
+                if (minesTimer < 60) {
+                    unlockAchievement('mines_speedrun', 'Siber Mayın Uzmanı', 'Mayın Tarlası oyununu 60 saniyenin altında bitirdin!', 250);
+                }
+
                 if(!minesBestScore || minesTimer < minesBestScore) {
                     minesBestScore = minesTimer;
                     document.getElementById('minesBest').innerText = minesBestScore;
@@ -1404,10 +1785,10 @@
         initMinesGame();
 
 
-        // --- 8. SİBER YILAN OYUNU ---
+        // --- 10. SİBER YILAN OYUNU ---
         const snakeCanvas = document.getElementById("snakeCanvas");
         const snakeCtx = snakeCanvas.getContext("2d");
-        const boxSize = 15; // Hücre boyutu
+        const boxSize = 15;
         let snake, snakeFood, snakeDx, snakeDy, snakeGameInterval, snakeScore, snakeBestScore = 0;
         let snakeChangingDirection = false;
 
@@ -1431,7 +1812,7 @@
             snakeDy = 0;
             
             generateSnakeFood();
-            // Yılanı daha yavaş ve dengeli hale getirmek için interval hızı 100ms'den 160ms'ye düşürüldü
+            // Yavaş ve dengeli oyun yenileme hızı (160ms)
             snakeGameInterval = setInterval(drawSnakeGame, 160); 
         }
 
@@ -1451,6 +1832,12 @@
             if ((snakeDx !== 0 || snakeDy !== 0) && hasSnakeGameEnded()) {
                 clearInterval(snakeGameInterval);
                 alert("Siber Bağlantı Koptu! Oyun Bitti. Skorun: " + snakeScore);
+                
+                // Başarım Kontrolü
+                if (snakeScore >= 50) {
+                    unlockAchievement('snake_pro', 'Siber Anakonda', 'Siber Yılan oyununda en az 50 puan skor elde ettin!', 200);
+                }
+
                 if (snakeScore > snakeBestScore) {
                     snakeBestScore = snakeScore;
                     localStorage.setItem("snakeBest", snakeBestScore);
@@ -1467,13 +1854,13 @@
             snakeCtx.fillStyle = "#161b22";
             snakeCtx.fillRect(0, 0, snakeCanvas.width, snakeCanvas.height);
 
-            // Yemi çiz
+            // Yem Çiz
             snakeCtx.fillStyle = neonColor;
             snakeCtx.shadowBlur = 10;
             snakeCtx.shadowColor = neonColor;
             snakeCtx.fillRect(snakeFood.x, snakeFood.y, boxSize, boxSize);
 
-            // Yılanı çiz
+            // Yılan Çiz
             snake.forEach((part, index) => {
                 snakeCtx.fillStyle = index === 0 ? primaryColor : neonColor;
                 snakeCtx.shadowBlur = index === 0 ? 8 : 0;
@@ -1488,6 +1875,10 @@
                 if (snake[0].x === snakeFood.x && snake[0].y === snakeFood.y) {
                     snakeScore += 10;
                     document.getElementById("snakeScore").innerText = snakeScore;
+                    
+                    // Her yem yendiğinde +10 XP kazan
+                    addXP(10);
+                    
                     generateSnakeFood();
                 } else {
                     snake.pop();
@@ -1540,6 +1931,23 @@
             if (direction === "RIGHT" && !goingLeft) { snakeDx = boxSize; snakeDy = 0; }
             if (direction === "DOWN" && !goingUp) { snakeDx = 0; snakeDy = boxSize; }
         }
+
+
+        // --- SİSTEM BAŞLANGIÇ ÇALIŞTIRICISI ---
+        window.addEventListener('load', () => {
+            resizeCanvas();
+            initPassSystem();
+            
+            // İnteraktif parçacık arka planını varsayılan olarak başlat
+            initParticles();
+            animateParticles();
+
+            window.addEventListener('resize', () => {
+                resizeCanvas();
+                if (bgMode === 'particles') initParticles();
+                if (bgMode === 'matrix') initMatrix();
+            });
+        });
     </script>
 </body>
 </html>
