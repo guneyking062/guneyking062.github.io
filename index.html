@@ -4,15 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GÜNEYKING | Siber Portalı v4.0</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
             --neon-blue: #00f3ff;
             --neon-red: #ff003c;
             --neon-green: #00ff66;
-            --bg-dark: #070b13;
-            --card-bg: rgba(11, 19, 36, 0.75);
-            --border-glow: 0 0 15px rgba(0, 243, 255, 0.2);
+            --bg-dark: #050811;
+            --card-bg: rgba(13, 20, 35, 0.6);
+            --border-color: rgba(0, 243, 255, 0.25);
+            --border-glow: 0 0 15px rgba(0, 243, 255, 0.15);
         }
 
         * {
@@ -33,7 +34,7 @@
             position: relative;
         }
 
-        /* Arka Plan Efekti */
+        /* Orijinal Arka Plan Ağı */
         #particles-js {
             position: fixed;
             width: 100%;
@@ -41,73 +42,90 @@
             top: 0;
             left: 0;
             z-index: -1;
-            background: radial-gradient(circle at center, #0d1e36 0%, #050811 100%);
+            background: radial-gradient(circle at center, #091324 0%, #03050a 100%);
         }
 
         /* Üst Header */
         header {
             width: 100%;
-            max-width: 1200px;
-            padding: 25px 20px;
+            max-width: 1060px;
+            padding: 30px 10px 15px 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
         }
 
         .logo {
-            font-size: 2.2rem;
-            font-weight: 700;
+            font-size: 2rem;
+            font-weight: 800;
             color: var(--neon-blue);
-            text-shadow: 0 0 15px var(--neon-blue);
-            letter-spacing: 3px;
+            text-shadow: 0 0 15px rgba(0, 243, 255, 0.6);
+            letter-spacing: 2px;
         }
 
         .controls {
             display: flex;
-            gap: 15px;
+            gap: 12px;
+            align-items: center;
         }
 
-        .btn-control {
+        /* Orijinal Mavi Seçim Kutusu */
+        .select-theme {
             background: rgba(0, 243, 255, 0.1);
             border: 1px solid var(--neon-blue);
             color: var(--neon-blue);
-            padding: 8px 16px;
+            padding: 6px 12px;
             font-family: 'Orbitron', sans-serif;
             font-weight: 700;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
+            border-radius: 6px;
+            outline: none;
             cursor: pointer;
-            border-radius: 20px;
-            transition: all 0.3s ease;
+            text-shadow: 0 0 5px var(--neon-blue);
         }
 
-        .btn-control:hover {
-            background: var(--neon-blue);
-            color: #000;
-            box-shadow: 0 0 15px var(--neon-blue);
+        .btn-bg-toggle {
+            background: rgba(0, 243, 255, 0.05);
+            border: 1px solid rgba(0, 243, 255, 0.4);
+            color: var(--neon-blue);
+            padding: 6px 12px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.2s;
         }
 
-        /* Ana İçerik Alanı */
+        .btn-bg-toggle:hover {
+            background: rgba(0, 243, 255, 0.2);
+            box-shadow: 0 0 8px rgba(0, 243, 255, 0.3);
+        }
+
+        /* Ana Grid ve Yerleşim Dengesi */
         .main-container {
             width: 100%;
-            max-width: 1200px;
-            padding: 0 20px 60px 20px;
+            max-width: 1060px;
+            padding: 10px 10px 60px 10px;
             display: flex;
             flex-direction: column;
-            gap: 30px;
+            gap: 24px;
         }
 
-        /* Orijinal Geniş Pass Kartı */
+        /* Orijinal Büyüklükte Geniş Pass Kartı */
         .pass-card {
             background: var(--card-bg);
-            border: 2px solid var(--neon-blue);
-            border-radius: 20px;
-            padding: 25px 35px;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px 30px;
             box-shadow: var(--border-glow);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(8px);
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
         }
 
         .pass-header {
@@ -118,244 +136,369 @@
             gap: 15px;
         }
 
-        .pass-info-left {
+        .pass-profile {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 16px;
+        }
+
+        .crown-container {
+            width: 54px;
+            height: 54px;
+            background: radial-gradient(circle, rgba(0, 243, 255, 0.2) 0%, rgba(0, 0, 0, 0) 70%);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.1);
         }
 
         .crown-icon {
-            font-size: 2.5rem;
-            background: radial-gradient(circle, rgba(0,243,255,0.2) 0%, transparent 70%);
-            padding: 10px;
-            border-radius: 50%;
+            font-size: 1.8rem;
         }
 
         .pass-titles h2 {
-            font-size: 1.6rem;
-            letter-spacing: 1px;
-            margin-bottom: 5px;
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
         }
 
         .rank-title {
-            color: var(--neon-blue);
-            font-size: 1rem;
+            color: #4da6ff;
+            font-size: 0.8rem;
             font-weight: 700;
-            text-shadow: 0 0 8px var(--neon-blue);
+            letter-spacing: 1px;
         }
 
-        .xp-wrapper {
+        .xp-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
             flex-grow: 1;
-            max-width: 500px;
-            margin: 0 20px;
+            max-width: 440px;
+            margin: 0 15px;
         }
 
-        @media (max-width: 850px) {
-            .xp-wrapper {
-                margin: 10px 0;
+        @media (max-width: 800px) {
+            .xp-section {
+                margin: 5px 0;
                 max-width: 100%;
                 width: 100%;
             }
         }
 
-        .xp-text {
-            font-family: 'Share Tech Mono', monospace;
+        .xp-label {
+            font-size: 0.75rem;
+            color: #8fa0b5;
+            white-space: nowrap;
+        }
+
+        .xp-progress-container {
+            flex-grow: 1;
+        }
+
+        .xp-values {
             display: flex;
             justify-content: space-between;
-            font-size: 0.95rem;
-            margin-bottom: 8px;
-            color: #8fa0b5;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.75rem;
+            color: #5d718a;
+            margin-bottom: 4px;
         }
 
-        .xp-bar-bg {
+        .xp-bar-outer {
             background: #090f1a;
-            height: 14px;
-            border-radius: 10px;
+            height: 8px;
+            border-radius: 4px;
             overflow: hidden;
-            border: 1px solid rgba(0, 243, 255, 0.3);
+            border: 1px solid rgba(0, 243, 255, 0.15);
         }
 
-        .xp-bar {
-            background: linear-gradient(90deg, var(--neon-blue), #00bcff);
+        .xp-bar-inner {
+            background: linear-gradient(90deg, #00d9ff, #0077ff);
             height: 100%;
             width: 0%;
-            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 0 12px var(--neon-blue);
+            transition: width 0.6s ease;
+            box-shadow: 0 0 8px rgba(0, 243, 255, 0.5);
         }
 
-        /* Günlük Görevler Panel Düzeni */
-        .quests-panel {
+        /* Orijinal Mavi "BAŞARIMLARI GÖR" Butonu */
+        .btn-achievements {
+            background: #3b82f6;
+            color: #fff;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 0.75rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+            transition: 0.2s;
+        }
+
+        .btn-achievements:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.6);
+        }
+
+        /* Görevler İnce Çizgili Panel Düzeni */
+        .quests-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 10px;
-            border-top: 1px solid rgba(0, 243, 255, 0.15);
-            padding-top: 15px;
+            gap: 16px;
+            margin-top: 5px;
+            border-top: 1px solid rgba(0, 243, 255, 0.1);
+            padding-top: 18px;
         }
 
-        @media (max-width: 750px) {
-            .quests-panel {
+        @media (max-width: 700px) {
+            .quests-container {
                 grid-template-columns: 1fr;
             }
         }
 
-        .quest-item {
+        .quest-box {
+            background: rgba(0, 243, 255, 0.02);
+            border: 1px solid rgba(0, 243, 255, 0.15);
+            border-radius: 8px;
+            padding: 10px 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(0, 243, 255, 0.03);
-            border-left: 4px solid var(--neon-blue);
-            padding: 12px 18px;
-            border-radius: 8px;
-            font-size: 0.85rem;
             font-family: 'Share Tech Mono', monospace;
-            transition: 0.3s;
+            font-size: 0.8rem;
         }
 
-        .quest-status {
-            font-weight: bold;
+        .quest-desc {
+            color: #cdd7e5;
+        }
+
+        .quest-reward {
             color: var(--neon-green);
-            text-shadow: 0 0 5px var(--neon-green);
+            font-weight: 700;
+            text-shadow: 0 0 4px rgba(0, 255, 102, 0.3);
         }
 
-        /* Orijinal 3 Sütunlu Büyük Oyun Kartları Grid'i */
-        .games-grid {
+        /* Orijinal 3 Sütunlu Dengeli Oyun Grid'i */
+        .games-layout {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 25px;
+            gap: 20px;
         }
 
         @media (max-width: 950px) {
-            .games-grid {
+            .games-layout {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
         @media (max-width: 650px) {
-            .games-grid {
+            .games-layout {
                 grid-template-columns: 1fr;
             }
         }
 
+        /* Orijinal Şık Kartlar */
         .game-card {
             background: var(--card-bg);
-            border: 1px solid rgba(0, 243, 255, 0.15);
-            border-radius: 18px;
-            padding: 25px;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
             text-align: center;
             min-height: 380px;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             position: relative;
         }
 
         .game-card:hover {
             border-color: var(--neon-blue);
-            transform: translateY(-5px);
+            transform: translateY(-4px);
             box-shadow: var(--border-glow);
         }
 
-        .game-icon {
-            font-size: 4.5rem;
-            margin-bottom: 20px;
-            filter: drop-shadow(0 0 10px rgba(255,255,255,0.1));
+        /* Soru İşareti Butonu */
+        .btn-help {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: transparent;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            color: var(--neon-blue);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
         }
 
-        .game-info h3 {
-            font-size: 1.3rem;
-            margin-bottom: 12px;
+        .btn-help:hover {
+            background: var(--neon-blue);
+            color: #000;
+        }
+
+        /* Orijinal Parlayan 3D ve Sayı İkonları */
+        .custom-icon-62 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--neon-blue);
+            text-shadow: 0 0 20px rgba(0, 243, 255, 0.8);
+            margin: 15px 0;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .custom-icon-hourglass {
+            font-size: 3.5rem;
+            color: var(--neon-blue);
+            text-shadow: 0 0 20px rgba(0, 243, 255, 0.8);
+            margin: 15px 0;
+            display: inline-block;
+            transform: rotate(0deg);
+        }
+
+        .emoji-icon {
+            font-size: 3.2rem;
+            margin: 15px 0;
+            filter: drop-shadow(0 0 8px rgba(255,255,255,0.1));
+        }
+
+        .card-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 8px;
             letter-spacing: 0.5px;
         }
 
-        .game-info p {
-            font-size: 0.85rem;
-            color: #a4b3c6;
+        .card-description {
+            font-size: 0.75rem;
+            color: #798b9e;
             line-height: 1.5;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
+            max-width: 260px;
         }
 
-        .btn-play {
+        /* Orijinal İçi Boş Buton Tasarımı */
+        .btn-action {
             background: transparent;
             border: 1px solid rgba(0, 243, 255, 0.4);
-            color: #fff;
-            padding: 10px 30px;
+            color: #ffffff;
+            padding: 10px;
             border-radius: 8px;
-            cursor: pointer;
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.85rem;
             font-weight: 700;
-            width: 100%;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
+            font-size: 0.75rem;
             letter-spacing: 1px;
+            width: 100%;
+            cursor: pointer;
+            transition: 0.2s;
+            text-transform: uppercase;
         }
 
-        .btn-play:hover {
+        .btn-action:hover {
             border-color: var(--neon-blue);
-            background: rgba(0, 243, 255, 0.15);
+            background: rgba(0, 243, 255, 0.1);
             color: var(--neon-blue);
-            box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.25);
         }
 
-        /* SİBER YILAN MODAL PENCERESİ */
+        /* Siber Yılan Butonu (6. Kart Aktif Mavi Buton) */
+        .btn-action-active {
+            background: var(--neon-blue);
+            border: 1px solid var(--neon-blue);
+            color: #000;
+            box-shadow: 0 0 12px rgba(0, 243, 255, 0.4);
+        }
+
+        .btn-action-active:hover {
+            background: #ffffff;
+            border-color: #ffffff;
+            color: #000;
+            box-shadow: 0 0 15px #ffffff;
+        }
+
+        /* OYUN MODAL PENCERESİ */
         .modal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(5, 8, 17, 0.95);
+            background: rgba(3, 5, 10, 0.95);
             z-index: 100;
             justify-content: center;
             align-items: center;
         }
 
         .modal-content {
-            background: #0d1321;
-            border: 2px solid var(--neon-blue);
+            background: #090f1a;
+            border: 1px solid var(--neon-blue);
             border-radius: 16px;
-            padding: 25px;
-            max-width: 480px;
+            padding: 24px;
+            max-width: 440px;
             width: 90%;
             text-align: center;
-            box-shadow: 0 0 30px rgba(0, 243, 255, 0.35);
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.3);
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            border-bottom: 1px solid rgba(0, 243, 255, 0.2);
-            padding-bottom: 12px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 243, 255, 0.15);
+            padding-bottom: 10px;
+        }
+
+        .btn-close-modal {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #aaa;
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+        }
+
+        .btn-close-modal:hover {
+            border-color: var(--neon-red);
+            color: var(--neon-red);
         }
 
         canvas {
-            background: #040712;
-            border: 2px solid #1a2333;
+            background: #020408;
+            border: 1px solid rgba(0, 243, 255, 0.2);
             border-radius: 8px;
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.15);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.1);
         }
 
         .snake-stats {
             display: flex;
             justify-content: space-between;
             font-family: 'Share Tech Mono', monospace;
-            font-size: 1rem;
+            font-size: 0.95rem;
             color: var(--neon-green);
-            margin: 15px 0;
+            margin: 12px 0;
         }
 
         .snake-legend {
             display: flex;
             justify-content: center;
             gap: 12px;
-            margin-top: 15px;
-            font-size: 0.7rem;
+            margin-top: 12px;
+            font-size: 0.68rem;
             font-family: 'Share Tech Mono', monospace;
         }
-        .legend-item { display: flex; align-items: center; gap: 5px; }
-        .dot { width: 10px; height: 10px; border-radius: 50%; }
+        .legend-item { display: flex; align-items: center; gap: 4px; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; }
     </style>
 </head>
 <body>
@@ -365,100 +508,115 @@
     <header>
         <div class="logo">GÜNEYKING</div>
         <div class="controls">
-            <button class="btn-control">SİBER MAVİ</button>
-            <button class="btn-control" style="border-color: rgba(255,255,255,0.2); color: #aaa;">BG: PARTICLES</button>
+            <select class="select-theme">
+                <option>SİBER MAVİ</option>
+            </select>
+            <button class="btn-bg-toggle">
+                <input type="checkbox" checked style="pointer-events: none; accent-color: var(--neon-blue);"> BG: PARTICLES
+            </button>
         </div>
     </header>
 
     <div class="main-container">
         <div class="pass-card">
             <div class="pass-header">
-                <div class="pass-info-left">
-                    <span class="crown-icon">👑</span>
+                <div class="pass-profile">
+                    <div class="crown-container">
+                        <span class="crown-icon">👑</span>
+                    </div>
                     <div class="pass-titles">
                         <h2>GÜNEYKING Pass</h2>
-                        <div class="rank-title" id="passRank">Yükleniyor...</div>
+                        <div class="rank-title" id="passRank">ÇIRAK HACKER</div>
                     </div>
                 </div>
                 
-                <div class="xp-wrapper">
-                    <div class="xp-text">
-                        <span id="passLevel">Mevcut Seviye: 1</span>
-                        <span id="passXpText">0 / 300 XP</span>
-                    </div>
-                    <div class="xp-bar-bg">
-                        <div class="xp-bar" id="passXpBar"></div>
+                <div class="xp-section">
+                    <span class="xp-label">Mevcut Seviye: <strong id="passLevel" style="color:#fff;">1</strong></span>
+                    <div class="xp-progress-container">
+                        <div class="xp-values">
+                            <span></span>
+                            <span id="passXpText">0 / 300 XP</span>
+                        </div>
+                        <div class="xp-bar-outer">
+                            <div class="xp-bar-inner" id="passXpBar"></div>
+                        </div>
                     </div>
                 </div>
 
-                <button class="btn-control" style="border-radius: 8px;">BAŞARIMLARI GÖR</button>
+                <button class="btn-achievements">🏆 BAŞARIMLARI GÖR</button>
             </div>
 
-            <div class="quests-panel">
-                <div class="quest-item" id="questScore5">
-                    <span>[Görev] Siber Yılan'da 5 puan yap.</span>
-                    <span class="quest-status" id="qStatus1">+50 XP</span>
+            <div class="quests-container">
+                <div class="quest-box" id="questScore5">
+                    <span class="quest-desc">[Görev] Siber Yılan'da 5 puan yap.</span>
+                    <span class="quest-reward" id="qStatus1">+50 XP</span>
                 </div>
-                <div class="quest-item" id="questOverclock">
-                    <span>[Görev] Overclock (Kırmızı) yem ye.</span>
-                    <span class="quest-status" id="qStatus2">+30 XP</span>
+                <div class="quest-box" id="questOverclock">
+                    <span class="quest-desc">[Görev] Overclock (Kırmızı) yem ye.</span>
+                    <span class="quest-reward" id="qStatus2">+30 XP</span>
                 </div>
             </div>
         </div>
 
-        <div class="games-grid">
+        <div class="games-layout">
             <div class="game-card">
-                <div class="game-icon">🔢</div>
-                <div class="game-info">
-                    <h3>Sayı Tahmin Oyunu 3.0</h3>
-                    <p>1 ile 100 arasında gizli bir sayıyı 6 hakta tahmin etmeye çalıştığın retro siber oyun.</p>
+                <button class="btn-help">?</button>
+                <div class="custom-icon-62">62</div>
+                <div>
+                    <h3 class="card-title">Sayı Tahmin Oyunu 3.0</h3>
+                    <p class="card-description">1 ile 100 arasında gizli bir sayı var. 6 hakkın var. En iyi skorunu egale et!</p>
                 </div>
-                <button class="btn-play" onclick="alert('Modül yükleniyor...')">Oyunu Başlat</button>
+                <button class="btn-action" onclick="alert('Modül yükleniyor...')">Oyunu Başlat</button>
             </div>
 
             <div class="game-card">
-                <div class="game-icon">⏳</div>
-                <div class="game-info">
-                    <h3>Zaman Yolculuğu 3.0</h3>
-                    <p>Biyometrik verilerini, burcunu, jenerasyonunu ve dünyadaki kalan günlerini anlık takip ettiğin siber veri paneli.</p>
+                <button class="btn-help">?</button>
+                <div class="custom-icon-hourglass">⏳</div>
+                <div>
+                    <h3 class="card-title">Zaman Yolculuğu 3.0</h3>
+                    <p class="card-description">Biyometrik verilerini, burcunu, jenerasyonunu ve kalan günlerini anlık takip et.</p>
                 </div>
-                <button class="btn-play" onclick="alert('Veriler senkronize ediliyor...')">Dashboard'u Aç</button>
+                <button class="btn-action" onclick="alert('Dashboard açılıyor...')">Dashboard'u Aç</button>
             </div>
 
             <div class="game-card">
-                <div class="game-icon">🧠</div>
-                <div class="game-info">
-                    <h3>Kozmik Eşleştirme</h3>
-                    <p>Kartların arkasındaki gizli siber sembolleri en az hamlede eşleştirmeyi dene!</p>
+                <button class="btn-help">?</button>
+                <div class="emoji-icon">🧠</div>
+                <div>
+                    <h3 class="card-title">Kozmik Eşleştirme</h3>
+                    <p class="card-description">Kartların arkasındaki gizli siber sembolleri en az hamlede eşleştirmeyi dene!</p>
                 </div>
-                <button class="btn-play" onclick="alert('Matris hazırlanıyor...')">Oyunu Başlat</button>
+                <button class="btn-action" onclick="alert('Hafıza matrisi yükleniyor...')">Oyunu Başlat</button>
             </div>
 
             <div class="game-card">
-                <div class="game-icon">🧩</div>
-                <div class="game-info">
-                    <h3>Kozmik Sudoku</h3>
-                    <p>Evrenin sayısal düzenini çöz! Zihnini dinlendirecek harika bir siber sudoku.</p>
+                <button class="btn-help">?</button>
+                <div class="emoji-icon">🧩</div>
+                <div>
+                    <h3 class="card-title">Kozmik Sudoku</h3>
+                    <p class="card-description">Evrenin sayısal düzenini çöz! Zihnini dinlendirecek harika bir siber sudoku.</p>
                 </div>
-                <button class="btn-play" onclick="alert('Sudoku matrisi oluşturuluyor...')">Oyunu Başlat</button>
+                <button class="btn-action" onclick="alert('Bulmaca oluşturuluyor...')">Oyunu Başlat</button>
             </div>
 
             <div class="game-card">
-                <div class="game-icon">💣</div>
-                <div class="game-info">
-                    <h3>Siber Mayın Tarlası</h3>
-                    <p>6 gizli mayını tetiklemeden tüm güvenli siber alanları temizle ve zamana karşı yarış!</p>
+                <button class="btn-help">?</button>
+                <div class="emoji-icon">💣</div>
+                <div>
+                    <h3 class="card-title">Siber Mayın Tarlası</h3>
+                    <p class="card-description">6 gizli mayını tetiklemeden tüm güvenli siber alanları temizle ve zamana karşı yarış!</p>
                 </div>
-                <button class="btn-play" onclick="alert('Siber alan taranıyor...')">Oyunu Başlat</button>
+                <button class="btn-action" onclick="alert('Mayın tarlası kuruluyor...')">Oyunu Başlat</button>
             </div>
 
             <div class="game-card" style="border-color: var(--neon-blue); box-shadow: var(--border-glow);">
-                <div class="game-icon">🐍</div>
-                <div class="game-info">
-                    <h3 style="color: var(--neon-blue);">Siber Yılan v4.0</h3>
-                    <p style="color: #fff;">Sanal ağlarda gezin, neon veri paketlerini topla ve kendini çarpmadan en yüksek skora ulaş!</p>
+                <button class="btn-help">?</button>
+                <div class="emoji-icon">🐍</div>
+                <div>
+                    <h3 class="card-title" style="color: var(--neon-blue);">Siber Yılan v4.0</h3>
+                    <p class="card-description" style="color: #cdd7e5;">Sanal ağlarda gezin, neon veri paketlerini topla ve kendini çarpmadan en yüksek skora ulaş!</p>
                 </div>
-                <button class="btn-play" style="background: var(--neon-blue); color:#000;" onclick="openSnakeModal()">Oyunu Başlat</button>
+                <button class="btn-action btn-action-active" onclick="openSnakeModal()">Oyunu Başlat</button>
             </div>
         </div>
     </div>
@@ -466,8 +624,8 @@
     <div class="modal" id="snakeModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 style="color: var(--neon-blue); font-size: 1.2rem;">Siber Yılan 4.0</h3>
-                <button class="btn-control" onclick="closeSnakeModal()">Kapat [X]</button>
+                <h3 style="color: var(--neon-blue); font-size: 1.1rem;">Siber Yılan 4.0</h3>
+                <button class="btn-close-modal" onclick="closeSnakeModal()">KAPAT [X]</button>
             </div>
             
             <div class="snake-stats">
@@ -482,13 +640,13 @@
                 <div class="legend-item"><div class="dot" style="background: var(--neon-red);"></div> Overclock (+3 / Hızlı)</div>
                 <div class="legend-item"><div class="dot" style="background: var(--neon-green);"></div> Lag (+1 / Yavaş)</div>
             </div>
-            <p style="font-size: 0.7rem; color: #666; margin-top: 15px;">*Portallar Aktif! Duvarlardan geçebilirsiniz.</p>
+            <p style="font-size: 0.65rem; color: #55667a; margin-top: 12px;">*Portallar Aktif! Duvarlardan geçebilirsiniz.</p>
         </div>
     </div>
 
     <script>
         // ==========================================
-        // 1. GÜNEYKING PASS & LOCAL STORAGE
+        // 1. GÜNEYKING PASS VERİ TABANI & LOCAL STORAGE
         // ==========================================
         let currentLevel = parseInt(localStorage.getItem('guneyking_level')) || 1;
         let currentXP = parseInt(localStorage.getItem('guneyking_xp')) || 0;
@@ -522,13 +680,13 @@
         function updatePassUI() {
             const currentTitle = hackerTitles[currentLevel] || "KOD TANRISI";
             document.getElementById("passRank").innerText = currentTitle;
-            document.getElementById("passLevel").innerText = `Mevcut Seviye: ${currentLevel}`;
+            document.getElementById("passLevel").innerText = currentLevel;
             document.getElementById("passXpText").innerText = `${currentXP} / ${maxXP} XP`;
             document.getElementById("passXpBar").style.width = `${(currentXP / maxXP) * 100}%`;
         }
 
         // ==========================================
-        // 2. SİBER YILAN OYUNU MOTORU & PORTALLAR
+        // 2. SİBER YILAN OYUN MOTORU & SİBER PORTALLAR
         // ==========================================
         const canvas = document.getElementById("snakeCanvas");
         const ctx = canvas.getContext("2d");
@@ -595,13 +753,13 @@
         function gameLoop() {
             let head = { x: snake[0].x + dx, y: snake[0].y + dy };
 
-            // SİBER PORTAL: Karşı duvardan geçiş mekaniği
+            // PORTAL SİSTEMİ: Karşı duvardan geçiş geçitleri
             if (head.x >= canvas.width) head.x = 0;
             else if (head.x < 0) head.x = canvas.width - boxSize;
             if (head.y >= canvas.height) head.y = 0;
             else if (head.y < 0) head.y = canvas.height - boxSize;
 
-            // Kendine çarpma kontrolü
+            // Çarpışma Testi
             for (let i = 1; i < snake.length; i++) {
                 if (head.x === snake[i].x && head.y === snake[i].y) {
                     gameOver();
@@ -626,12 +784,12 @@
             if (food.type === 'normal') {
                 score += 1;
                 currentSpeed = 100;
-                status.innerText = "Veri Kaydedildi";
+                status.innerText = "Veri Paketi Alındı";
                 status.style.color = "var(--neon-blue)";
             } else if (food.type === 'overclock') {
                 score += 3;
                 currentSpeed = 55;
-                status.innerText = "OVERCLOCK!";
+                status.innerText = "OVERCLOCK AKTİF!";
                 status.style.color = "var(--neon-red)";
                 if (!quests.overclockEaten) {
                     quests.overclockEaten = true;
@@ -640,8 +798,8 @@
                 }
             } else if (food.type === 'lag') {
                 score += 1;
-                currentSpeed = 160;
-                status.innerText = "Sistem Yavaşlatıldı";
+                currentSpeed = 165;
+                status.innerText = "Ağ Gecikmesi (Yavaş)";
                 status.style.color = "var(--neon-green)";
             }
 
@@ -658,10 +816,10 @@
         }
 
         function draw() {
-            ctx.fillStyle = "#040712";
+            ctx.fillStyle = "#020408";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Gıda çizimi
+            // Gıda neon çizimi
             let foodColor = "var(--neon-blue)";
             if (food.type === 'overclock') foodColor = "var(--neon-red)";
             if (food.type === 'lag') foodColor = "var(--neon-green)";
@@ -671,7 +829,7 @@
             ctx.fillStyle = foodColor;
             ctx.fillRect(food.x + 1, food.y + 1, boxSize - 2, boxSize - 2);
 
-            // Yılan çizimi
+            // Yılan neon çizimi
             for (let i = 0; i < snake.length; i++) {
                 ctx.fillStyle = i === 0 ? "#ffffff" : "var(--neon-green)";
                 ctx.shadowColor = "var(--neon-green)";
@@ -682,12 +840,12 @@
 
         function gameOver() {
             clearInterval(gameInterval);
-            document.getElementById("snakeStatus").innerText = "SİSTEM BAĞLANTISI KOPTU!";
+            document.getElementById("snakeStatus").innerText = "BAĞLANTI KESİLDİ!";
             document.getElementById("snakeStatus").style.color = "var(--neon-red)";
             setTimeout(initSnakeGame, 2000);
         }
 
-        // Yön tuşları dinleyicisi
+        // Tuş Dinleyicileri
         document.addEventListener("keydown", e => {
             if (e.key === "ArrowUp" && dy === 0) { dx = 0; dy = -boxSize; }
             else if (e.key === "ArrowDown" && dy === 0) { dx = 0; dy = boxSize; }
@@ -695,13 +853,13 @@
             else if (e.key === "ArrowRight" && dx === 0) { dx = boxSize; dy = 0; }
         });
 
-        // Görev Arayüz Kontrolü
+        // Görev Tamamlama Arayüz Tetikçisi
         function completeQuestUI(id, text) {
             const el = document.getElementById(id);
             if (el) {
-                el.style.opacity = "0.5";
+                el.style.opacity = "0.4";
                 el.style.textDecoration = "line-through";
-                el.querySelector(".quest-status").innerText = text;
+                el.querySelector(".quest-reward").innerText = text;
             }
         }
 
@@ -715,7 +873,7 @@
             document.getElementById("qStatus2").innerText = "+30 XP";
         }
 
-        // Başlangıç Yüklemesi
+        // İlk Çalıştırma
         updatePassUI();
     </script>
 </body>
