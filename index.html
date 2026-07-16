@@ -1129,7 +1129,7 @@
 
 
         // --- 6. KOZMİK SUDOKU ---
-        // Temel çözülmüş Sudoku şablonu (Bu şablonu satır/sütun kaydırarak dinamik olarak değiştirebiliriz)
+        // Temel çözülmüş Sudoku şablonu
         const baseSolvedSudoku = [
             [5, 3, 4, 6, 7, 8, 9, 1, 2],
             [6, 7, 2, 1, 9, 5, 3, 4, 8],
@@ -1148,7 +1148,6 @@
         let selectedSudokuCell = null;
 
         function shuffleSudokuSolution() {
-            // Çözülmüş ana matrisin sayılarını rastgele eşleştirerek yeni bir geçerli Sudoku elde ederiz
             const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
             const shuffled = [...numbers].sort(() => Math.random() - 0.5);
             
@@ -1170,7 +1169,6 @@
             else if (difficulty === "hard") cellsToRemove = 55;
             else if (difficulty === "very_hard") cellsToRemove = 64;
 
-            // Başlangıç matrisini tam çözümün kopyası olarak al
             initialSudoku = JSON.parse(JSON.stringify(solvedSudoku));
 
             // Hücreleri rastgele kaldırarak boşluklar yarat
@@ -1366,10 +1364,9 @@
                 return;
             }
 
-            if(cell.isFlagged) return; // Bayraklı yer kazılamaz.
+            if(cell.isFlagged) return; 
 
             if(cell.isMine) {
-                // Game Over!
                 clearInterval(minesTimerInterval);
                 minesGridData.forEach(c => { if(c.isMine) c.isRevealed = true; });
                 renderMinesGrid();
@@ -1434,7 +1431,8 @@
             snakeDy = 0;
             
             generateSnakeFood();
-            snakeGameInterval = setInterval(drawSnakeGame, 100);
+            // Yılanı daha yavaş ve dengeli hale getirmek için interval hızı 100ms'den 160ms'ye düşürüldü
+            snakeGameInterval = setInterval(drawSnakeGame, 160); 
         }
 
         function generateSnakeFood() {
@@ -1466,7 +1464,6 @@
             const neonColor = getComputedStyle(document.body).getPropertyValue('--neon-color').trim() || '#00f0ff';
             const primaryColor = getComputedStyle(document.body).getPropertyValue('--primary-color').trim() || '#3b82f6';
             
-            // Arka planı çiz
             snakeCtx.fillStyle = "#161b22";
             snakeCtx.fillRect(0, 0, snakeCanvas.width, snakeCanvas.height);
 
