@@ -670,7 +670,16 @@
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal('sudokuModal')">&times;</span>
             <h2 style="color: #10b981; margin-bottom: 5px;">🧩 Kozmik Sudoku</h2>
-            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">Boş hücreleri seç ve aşağıdaki sayılarla doldur!</p>
+            <div style="margin: 10px 0; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                <label for="sudokuDifficulty" style="font-size: 13px; color: var(--text-muted);">Zorluk Derecesi:</label>
+                <select id="sudokuDifficulty" class="theme-select" style="padding: 5px 10px; border-radius: 10px;" onchange="initSudokuGame()">
+                    <option value="very_easy">🟢 Çok Kolay</option>
+                    <option value="easy" selected>🟡 Kolay</option>
+                    <option value="medium">🟠 Orta</option>
+                    <option value="hard">🔴 Zor</option>
+                    <option value="very_hard">💀 Çok Zor</option>
+                </select>
+            </div>
             <div class="sudoku-container">
                 <div class="sudoku-grid" id="sudokuGrid"></div>
                 <div class="sudoku-numbers">
@@ -1120,18 +1129,8 @@
 
 
         // --- 6. KOZMİK SUDOKU ---
-        let initialSudoku = [
-            [5, 3, 0, 0, 7, 0, 0, 0, 0],
-            [6, 0, 0, 1, 9, 5, 0, 0, 0],
-            [0, 9, 8, 0, 0, 0, 0, 6, 0],
-            [8, 0, 0, 0, 6, 0, 0, 0, 3],
-            [4, 0, 0, 8, 0, 3, 0, 0, 1],
-            [7, 0, 0, 0, 2, 0, 0, 0, 6],
-            [0, 6, 0, 0, 0, 0, 2, 8, 0],
-            [0, 0, 0, 4, 1, 9, 0, 0, 5],
-            [0, 0, 0, 0, 8, 0, 0, 7, 9]
-        ];
-        let solvedSudoku = [
+        // Temel çözülmüş Sudoku şablonu (Bu şablonu satır/sütun kaydırarak dinamik olarak değiştirebiliriz)
+        const baseSolvedSudoku = [
             [5, 3, 4, 6, 7, 8, 9, 1, 2],
             [6, 7, 2, 1, 9, 5, 3, 4, 8],
             [1, 9, 8, 3, 4, 2, 5, 6, 7],
@@ -1142,10 +1141,49 @@
             [2, 8, 7, 4, 1, 9, 6, 3, 5],
             [3, 4, 5, 2, 8, 6, 1, 7, 9]
         ];
+
+        let initialSudoku = [];
+        let solvedSudoku = [];
         let currentSudoku = [];
         let selectedSudokuCell = null;
 
+        function shuffleSudokuSolution() {
+            // Çözülmüş ana matrisin sayılarını rastgele eşleştirerek yeni bir geçerli Sudoku elde ederiz
+            const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+            const shuffled = [...numbers].sort(() => Math.random() - 0.5);
+            
+            solvedSudoku = baseSolvedSudoku.map(row => 
+                row.map(val => shuffled[val - 1])
+            );
+        }
+
         function initSudokuGame() {
+            shuffleSudokuSolution(); // Her el benzersiz bir çözüm üret
+
+            // Zorluk derecesine göre kapatılacak hücre sayısını belirle
+            const difficulty = document.getElementById("sudokuDifficulty").value;
+            let cellsToRemove = 30; // Varsayılan "Kolay"
+
+            if (difficulty === "very_easy") cellsToRemove = 15;
+            else if (difficulty === "easy") cellsToRemove = 30;
+            else if (difficulty === "medium") cellsToRemove = 45;
+            else if (difficulty === "hard") cellsToRemove = 55;
+            else if (difficulty === "very_hard") cellsToRemove = 64;
+
+            // Başlangıç matrisini tam çözümün kopyası olarak al
+            initialSudoku = JSON.parse(JSON.stringify(solvedSudoku));
+
+            // Hücreleri rastgele kaldırarak boşluklar yarat
+            let removed = 0;
+            while (removed < cellsToRemove) {
+                const row = Math.floor(Math.random() * 9);
+                const col = Math.floor(Math.random() * 9);
+                if (initialSudoku[row][col] !== 0) {
+                    initialSudoku[row][col] = 0;
+                    removed++;
+                }
+            }
+
             currentSudoku = JSON.parse(JSON.stringify(initialSudoku));
             document.getElementById('sudokuResult').innerText = "";
             selectedSudokuCell = null;
@@ -1392,7 +1430,6 @@
                 { x: 120, y: 150 }
             ];
             
-            // Başlangıçta yön sıfır: Kullanıcı tuşa basana dek hareket etmez
             snakeDx = 0;
             snakeDy = 0;
             
@@ -1426,7 +1463,6 @@
 
             snakeChangingDirection = false;
             
-            // CSS tema renklerini gerçek zamanlı olarak tarayıcıdan çekip Canvas'a tanıtıyoruz (Renksizlik hatasını çözer)
             const neonColor = getComputedStyle(document.body).getPropertyValue('--neon-color').trim() || '#00f0ff';
             const primaryColor = getComputedStyle(document.body).getPropertyValue('--primary-color').trim() || '#3b82f6';
             
@@ -1448,7 +1484,6 @@
             });
             snakeCtx.shadowBlur = 0;
 
-            // Yılan sadece yön verilmişse hareket etsin
             if (snakeDx !== 0 || snakeDy !== 0) {
                 const head = { x: snake[0].x + snakeDx, y: snake[0].y + snakeDy };
                 snake.unshift(head);
